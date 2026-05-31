@@ -1,122 +1,82 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
+import { useMemo, useState } from 'react';
+import './App.css';
+import { TrackerGrid } from './features/trackers/components/TrackerGrid';
+import { TrackerFormModal } from './features/trackers/components/TrackerFormModal';
+import { PriceHistoryModal } from './features/trackers/components/PriceHistoryModal';
+import { TestResultModal } from './features/trackers/components/TestResultModal';
+import {
+    useDeleteTracker,
+    usePauseTracker,
+    useResumeTracker,
+    useTrackers,
+} from './features/trackers/hooks';
+import type { GridActions, Tracker } from './features/trackers/types';
 
-function App() {
-  const [count, setCount] = useState(0)
-
-  return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.tsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
-
-      <div className="ticks"></div>
-
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
+interface FormModalState {
+    mode: 'create' | 'edit';
+    tracker?: Tracker;
 }
 
-export default App
+function App() {
+    const { data: trackers, isLoading, error } = useTrackers();
+    const { mutate: pauseMutate } = usePauseTracker();
+    const { mutate: resumeMutate } = useResumeTracker();
+    const { mutate: deleteMutate } = useDeleteTracker();
+
+    const [formModal, setFormModal] = useState<FormModalState | null>(null);
+    const [historyTracker, setHistoryTracker] = useState<Tracker | null>(null);
+    const [testTracker, setTestTracker] = useState<Tracker | null>(null);
+
+    const actions = useMemo<GridActions>(
+        () => ({
+            onEdit: (tracker) => setFormModal({ mode: 'edit', tracker }),
+            onTest: (tracker) => setTestTracker(tracker),
+            onPause: (tracker) => pauseMutate(tracker.id),
+            onResume: (tracker) => resumeMutate(tracker.id),
+            onDelete: (tracker) => {
+                if (window.confirm(`Delete "${tracker.productName}"? This also removes its price history.`)) {
+                    deleteMutate(tracker.id);
+                }
+            },
+            onShowHistory: (tracker) => setHistoryTracker(tracker),
+        }),
+        [pauseMutate, resumeMutate, deleteMutate],
+    );
+
+    return (
+        <div className="pw-app">
+            <header className="pw-header">
+                <h1>PriceWise</h1>
+                <button className="pw-primary" onClick={() => setFormModal({ mode: 'create' })}>
+                    + Add tracker
+                </button>
+            </header>
+
+            <main className="pw-main">
+                {isLoading && <p className="pw-status">Loading trackers…</p>}
+                {error && (
+                    <p className="pw-status pw-result-fail">
+                        Could not reach the API. Is the backend running on :8080?
+                    </p>
+                )}
+                {!isLoading && !error && <TrackerGrid rows={trackers ?? []} actions={actions} />}
+            </main>
+
+            {formModal && (
+                <TrackerFormModal
+                    mode={formModal.mode}
+                    tracker={formModal.tracker}
+                    onClose={() => setFormModal(null)}
+                />
+            )}
+            {historyTracker && (
+                <PriceHistoryModal tracker={historyTracker} onClose={() => setHistoryTracker(null)} />
+            )}
+            {testTracker && (
+                <TestResultModal tracker={testTracker} onClose={() => setTestTracker(null)} />
+            )}
+        </div>
+    );
+}
+
+export default App;
