@@ -11,6 +11,7 @@ import {
     useTrackers,
 } from './features/trackers/hooks';
 import type { GridActions, Tracker } from './features/trackers/types';
+import { formatPrice } from './lib/format';
 
 interface FormModalState {
     mode: 'create' | 'edit';
@@ -26,6 +27,17 @@ function App() {
     const [formModal, setFormModal] = useState<FormModalState | null>(null);
     const [historyTracker, setHistoryTracker] = useState<Tracker | null>(null);
     const [testTracker, setTestTracker] = useState<Tracker | null>(null);
+
+    const totalsByCurrency = useMemo(() => {
+        if (!trackers) return [];
+        const map = new Map<string, number>();
+        for (const t of trackers) {
+            if (t.currentPrice == null) continue;
+            const key = t.currency ?? '';
+            map.set(key, (map.get(key) ?? 0) + t.currentPrice);
+        }
+        return Array.from(map.entries());
+    }, [trackers]);
 
     const actions = useMemo<GridActions>(
         () => ({
@@ -75,6 +87,17 @@ function App() {
             {testTracker && (
                 <TestResultModal tracker={testTracker} onClose={() => setTestTracker(null)} />
             )}
+
+            <footer className="pw-totals-bar">
+                <span className="pw-totals-label">Total tracked value</span>
+                <span className="pw-totals-value">
+                    {totalsByCurrency.length === 0
+                        ? '—'
+                        : totalsByCurrency
+                              .map(([currency, sum]) => formatPrice(sum, currency || null))
+                              .join('  ·  ')}
+                </span>
+            </footer>
         </div>
     );
 }

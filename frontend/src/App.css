@@ -21,7 +21,7 @@
 .pw-main {
     flex: 1;
     min-height: 0;
-    padding: 16px 20px;
+    padding: 16px 20px 62px;
 }
 
 .pw-grid-wrap {
@@ -212,6 +212,34 @@
     margin: 0;
     font-size: 12px;
     color: var(--pw-muted);
+}
+
+/* Totals bar */
+.pw-totals-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 46px;
+    padding: 0 20px;
+    background: var(--pw-surface);
+    border-top: 1px solid var(--pw-border);
+    box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.06);
+    font-size: 13px;
+}
+
+.pw-totals-label {
+    font-weight: 600;
+    color: var(--pw-muted);
+}
+
+.pw-totals-value {
+    font-weight: 700;
+    color: var(--pw-text);
 }
 
 /* Test-scrape result */
