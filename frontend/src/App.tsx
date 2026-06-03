@@ -1,13 +1,17 @@
 import { useMemo, useState } from 'react';
 import './App.css';
+import { Sidebar } from './components/Sidebar';
 import { TrackerGrid } from './features/trackers/components/TrackerGrid';
 import { TrackerFormModal } from './features/trackers/components/TrackerFormModal';
 import { PriceHistoryModal } from './features/trackers/components/PriceHistoryModal';
 import { TestResultModal } from './features/trackers/components/TestResultModal';
 import {
+    useCreateTrackerList,
+    useDeleteTrackerList,
     useDeleteTracker,
     usePauseTracker,
     useResumeTracker,
+    useTrackerLists,
     useTrackers,
 } from './features/trackers/hooks';
 import type { GridActions, Tracker } from './features/trackers/types';
@@ -20,6 +24,9 @@ interface FormModalState {
 
 function App() {
     const { data: trackers, isLoading, error } = useTrackers();
+    const { data: lists = [] } = useTrackerLists();
+    const { mutateAsync: createListAsync } = useCreateTrackerList();
+    const { mutate: deleteListMutate } = useDeleteTrackerList();
     const { mutate: pauseMutate } = usePauseTracker();
     const { mutate: resumeMutate } = useResumeTracker();
     const { mutate: deleteMutate } = useDeleteTracker();
@@ -27,17 +34,39 @@ function App() {
     const [formModal, setFormModal] = useState<FormModalState | null>(null);
     const [historyTracker, setHistoryTracker] = useState<Tracker | null>(null);
     const [testTracker, setTestTracker] = useState<Tracker | null>(null);
+    const [sidebarOpen, setSidebarOpen] = useState(true);
+    const [activeListId, setActiveListId] = useState<number | null>(null);
+
+    async function handleAddList(name: string) {
+        const newList = await createListAsync(name);
+        setActiveListId(newList.id);
+    }
+
+    function handleDeleteList(id: number) {
+        deleteListMutate(id);
+        if (activeListId === id) setActiveListId(null);
+    }
+
+    const activeList = useMemo(
+        () => lists.find((l) => l.id === activeListId) ?? null,
+        [lists, activeListId],
+    );
+
+    const filteredTrackers = useMemo(() => {
+        if (!trackers) return [];
+        if (activeListId === null) return trackers;
+        return trackers.filter((t) => t.listId === activeListId);
+    }, [trackers, activeListId]);
 
     const totalsByCurrency = useMemo(() => {
-        if (!trackers) return [];
         const map = new Map<string, number>();
-        for (const t of trackers) {
+        for (const t of filteredTrackers) {
             if (t.currentPrice == null) continue;
             const key = t.currency ?? '';
             map.set(key, (map.get(key) ?? 0) + t.currentPrice);
         }
         return Array.from(map.entries());
-    }, [trackers]);
+    }, [filteredTrackers]);
 
     const actions = useMemo<GridActions>(
         () => ({
@@ -64,20 +93,45 @@ function App() {
                 </button>
             </header>
 
-            <main className="pw-main">
-                {isLoading && <p className="pw-status">Loading trackers…</p>}
-                {error && (
-                    <p className="pw-status pw-result-fail">
-                        Could not reach the API. Is the backend running on :8080?
-                    </p>
-                )}
-                {!isLoading && !error && <TrackerGrid rows={trackers ?? []} actions={actions} />}
-            </main>
+            <div className="pw-body">
+                <Sidebar
+                    lists={lists}
+                    activeListId={activeListId}
+                    isOpen={sidebarOpen}
+                    onToggle={() => setSidebarOpen((o) => !o)}
+                    onAddList={handleAddList}
+                    onDeleteList={handleDeleteList}
+                    onSelectList={setActiveListId}
+                />
+
+                <main className="pw-main">
+                    {activeList && (
+                        <div className="pw-folder-heading">
+                            <span className="pw-folder-heading-icon">▣</span>
+                            <h2>{activeList.name}</h2>
+                        </div>
+                    )}
+                    {isLoading && <p className="pw-status">Loading trackers…</p>}
+                    {error && (
+                        <p className="pw-status pw-result-fail">
+                            Could not reach the API. Is the backend running on :8080?
+                        </p>
+                    )}
+                    {!isLoading && !error && (
+                        <TrackerGrid rows={filteredTrackers} actions={actions} />
+                    )}
+                </main>
+            </div>
 
             {formModal && (
                 <TrackerFormModal
                     mode={formModal.mode}
                     tracker={formModal.tracker}
+                    listId={
+                        formModal.mode === 'create'
+                            ? activeListId
+                            : (formModal.tracker?.listId ?? null)
+                    }
                     onClose={() => setFormModal(null)}
                 />
             )}
@@ -89,7 +143,9 @@ function App() {
             )}
 
             <footer className="pw-totals-bar">
-                <span className="pw-totals-label">Total tracked value</span>
+                <span className="pw-totals-label">
+                    {activeList ? `${activeList.name} total` : 'Total tracked value'}
+                </span>
                 <span className="pw-totals-value">
                     {totalsByCurrency.length === 0
                         ? '—'

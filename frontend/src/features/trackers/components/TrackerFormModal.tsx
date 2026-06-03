@@ -10,6 +10,8 @@ interface Props {
     mode: 'create' | 'edit';
     tracker?: Tracker;
     onClose: () => void;
+    /** Active list to assign a new tracker to, or the existing tracker's list on edit. */
+    listId?: number | null;
 }
 
 interface FormState {
@@ -31,7 +33,7 @@ const SCRAPE_AFFECTING: ReadonlyArray<keyof FormState> = [
     'proxyEnabled',
 ];
 
-export function TrackerFormModal({ mode, tracker, onClose }: Props) {
+export function TrackerFormModal({ mode, tracker, onClose, listId }: Props) {
     const [form, setForm] = useState<FormState>(() => ({
         productUrl: tracker?.productUrl ?? '',
         productName: tracker?.productName ?? '',
@@ -89,6 +91,7 @@ export function TrackerFormModal({ mode, tracker, onClose }: Props) {
             waitTimeMs: form.waitTimeMs,
             checkFrequencyMinutes: form.checkFrequencyMinutes,
             proxyEnabled: form.proxyEnabled,
+            listId: listId ?? null,
         };
         try {
             if (mode === 'edit' && tracker) {

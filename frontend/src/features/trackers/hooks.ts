@@ -1,8 +1,9 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { trackersApi } from './api';
+import { trackerListsApi, trackersApi } from './api';
 import type { TestScrapeRequest, TrackerRequest } from './types';
 
 const TRACKERS_KEY = ['trackers'] as const;
+const LISTS_KEY = ['tracker-lists'] as const;
 
 export function useTrackers() {
     return useQuery({
@@ -57,6 +58,32 @@ export function useResumeTracker() {
     return useMutation({
         mutationFn: (id: number) => trackersApi.resume(id),
         onSuccess: () => qc.invalidateQueries({ queryKey: TRACKERS_KEY }),
+    });
+}
+
+export function useTrackerLists() {
+    return useQuery({
+        queryKey: LISTS_KEY,
+        queryFn: trackerListsApi.list,
+    });
+}
+
+export function useCreateTrackerList() {
+    const qc = useQueryClient();
+    return useMutation({
+        mutationFn: (name: string) => trackerListsApi.create({ name }),
+        onSuccess: () => qc.invalidateQueries({ queryKey: LISTS_KEY }),
+    });
+}
+
+export function useDeleteTrackerList() {
+    const qc = useQueryClient();
+    return useMutation({
+        mutationFn: (id: number) => trackerListsApi.remove(id),
+        onSuccess: () => {
+            qc.invalidateQueries({ queryKey: LISTS_KEY });
+            qc.invalidateQueries({ queryKey: TRACKERS_KEY });
+        },
     });
 }
 

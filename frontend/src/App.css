@@ -18,15 +18,222 @@
     font-size: 20px;
 }
 
+.pw-body {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    overflow: hidden;
+}
+
 .pw-main {
     flex: 1;
     min-height: 0;
     padding: 16px 20px 62px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
 }
 
 .pw-grid-wrap {
-    height: 100%;
+    flex: 1;
+    min-height: 0;
     width: 100%;
+}
+
+/* Sidebar */
+.pw-sidebar {
+    width: 220px;
+    flex-shrink: 0;
+    background: var(--pw-bg);
+    border-right: 1px solid var(--pw-border);
+    display: flex;
+    flex-direction: column;
+    transition: width 0.2s ease;
+    overflow: hidden;
+    padding-bottom: 46px; /* clear fixed totals bar */
+}
+
+.pw-sidebar--collapsed {
+    width: 48px;
+}
+
+.pw-sidebar-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 6px;
+    border-bottom: 1px solid var(--pw-border);
+    height: 46px;
+    flex-shrink: 0;
+}
+
+.pw-sidebar-title {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--pw-muted);
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.pw-sidebar-toggle {
+    background: none;
+    border: none;
+    padding: 5px 7px;
+    border-radius: 5px;
+    color: var(--pw-muted);
+    font-size: 10px;
+    flex-shrink: 0;
+    line-height: 1;
+}
+
+.pw-sidebar-toggle:hover {
+    background: var(--pw-border);
+    color: var(--pw-text);
+}
+
+.pw-sidebar-nav {
+    flex: 1;
+    overflow-y: auto;
+    padding: 6px 0;
+}
+
+.pw-sidebar-item {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 9px 10px;
+    background: none;
+    border: none;
+    border-radius: 0;
+    font-size: 13px;
+    color: var(--pw-text);
+    text-align: left;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.pw-sidebar-item:hover:not(:disabled) {
+    background: #e4e8ed;
+}
+
+.pw-sidebar-item--active {
+    background: #cdd5de;
+    font-weight: 600;
+}
+
+.pw-sidebar-item--active:hover:not(:disabled) {
+    background: #c4cdd8;
+}
+
+.pw-sidebar-icon {
+    flex-shrink: 0;
+    font-size: 15px;
+    width: 20px;
+    text-align: center;
+    line-height: 1;
+    color: var(--pw-muted);
+}
+
+.pw-sidebar-item--active .pw-sidebar-icon {
+    color: var(--pw-text);
+}
+
+.pw-sidebar-label {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex: 1;
+}
+
+.pw-sidebar-footer {
+    padding: 8px;
+    border-top: 1px solid var(--pw-border);
+    flex-shrink: 0;
+}
+
+.pw-sidebar-add-btn {
+    width: 100%;
+    background: none;
+    border: 1px dashed var(--pw-border);
+    border-radius: 6px;
+    padding: 7px 10px;
+    font-size: 12px;
+    color: var(--pw-muted);
+    text-align: left;
+}
+
+.pw-sidebar-add-btn:hover {
+    border-color: var(--pw-primary);
+    color: var(--pw-primary);
+    background: rgba(31, 111, 235, 0.05);
+}
+
+.pw-sidebar-add-icon {
+    width: 100%;
+    justify-content: center;
+    padding: 7px 0;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--pw-muted);
+}
+
+.pw-sidebar-delete {
+    flex-shrink: 0;
+    background: none;
+    border: none;
+    padding: 0 2px;
+    font-size: 15px;
+    line-height: 1;
+    color: var(--pw-muted);
+    opacity: 0;
+    transition: opacity 0.15s;
+}
+
+.pw-sidebar-item:hover .pw-sidebar-delete {
+    opacity: 1;
+}
+
+.pw-sidebar-delete:hover {
+    color: var(--pw-danger) !important;
+}
+
+.pw-sidebar-new-input {
+    width: 100%;
+    font-size: 13px;
+    font-family: inherit;
+    padding: 6px 8px;
+    border: 1px solid var(--pw-primary);
+    border-radius: 6px;
+    color: var(--pw-text);
+    background: var(--pw-surface);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(31, 111, 235, 0.12);
+}
+
+/* Folder heading */
+.pw-folder-heading {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--pw-border);
+    flex-shrink: 0;
+}
+
+.pw-folder-heading-icon {
+    font-size: 16px;
+    color: var(--pw-muted);
+    line-height: 1;
+}
+
+.pw-folder-heading h2 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--pw-text);
 }
 
 .pw-status {

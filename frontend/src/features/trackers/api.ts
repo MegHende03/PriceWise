@@ -1,5 +1,5 @@
 import { apiClient } from '../../api/client';
-import type { PricePoint, ScrapeResult, TestScrapeRequest, Tracker, TrackerRequest } from './types';
+import type { PricePoint, ScrapeResult, TestScrapeRequest, Tracker, TrackerList, TrackerRequest } from './types';
 
 export const trackersApi = {
     list: () => apiClient.get<Tracker[]>('/api/trackers'),
@@ -12,4 +12,11 @@ export const trackersApi = {
     pause: (id: number) => apiClient.post<Tracker>(`/api/trackers/${id}/pause`),
     resume: (id: number) => apiClient.post<Tracker>(`/api/trackers/${id}/resume`),
     priceHistory: (id: number) => apiClient.get<PricePoint[]>(`/api/trackers/${id}/price-history`),
+};
+
+export const trackerListsApi = {
+    list: () => apiClient.get<TrackerList[]>('/api/tracker-lists'),
+    create: (body: { name: string }) => apiClient.post<TrackerList>('/api/tracker-lists', body),
+    rename: (id: number, body: { name: string }) => apiClient.put<TrackerList>(`/api/tracker-lists/${id}`, body),
+    remove: (id: number) => apiClient.del<void>(`/api/tracker-lists/${id}`),
 };
