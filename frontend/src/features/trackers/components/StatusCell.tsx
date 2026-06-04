@@ -2,7 +2,7 @@ import type { ICellRendererParams } from 'ag-grid-community';
 import type { Status, Tracker } from '../types';
 
 const COLORS: Record<Status, string> = {
-    ACTIVE: '#1a7f37',
+    ACTIVE: 'rgb(26, 127, 55)',
     PAUSED: '#9a6700',
     FAILED: '#cf222e',
     BLOCKED: '#8250df',

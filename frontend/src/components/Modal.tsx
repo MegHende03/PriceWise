@@ -9,7 +9,7 @@ interface ModalProps {
 
 export function Modal({ title, onClose, children, width = 560 }: ModalProps) {
     return (
-        <div className="pw-modal-overlay" onClick={onClose}>
+        <div className="pw-modal-overlay">
             <div
                 className="pw-modal"
                 style={{ width }}

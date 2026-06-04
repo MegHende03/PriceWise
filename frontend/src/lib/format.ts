@@ -27,6 +27,19 @@ export function formatPrice(
     return price.toFixed(2);
 }
 
+/**
+ * Percent change from {@code previous} to {@code current}, e.g. a drop from 100 → 85
+ * returns -15. Returns {@code null} when a meaningful change cannot be computed
+ * (missing data, or no prior price to compare against).
+ */
+export function computePercentChange(
+    current: number | null | undefined,
+    previous: number | null | undefined,
+): number | null {
+    if (current == null || previous == null || previous === 0) return null;
+    return ((current - previous) / previous) * 100;
+}
+
 export function formatDateTime(iso: string | null | undefined): string {
     if (!iso) return 'Never';
     const date = new Date(iso);

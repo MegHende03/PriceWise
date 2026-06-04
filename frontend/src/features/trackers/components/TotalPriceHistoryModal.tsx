@@ -10,27 +10,30 @@ import {
 import { Modal } from '../../../components/Modal';
 import { PriceChange } from '../../../components/PriceChange';
 import { formatPrice } from '../../../lib/format';
-import { usePriceHistory } from '../hooks';
+import { useTotalPriceHistory } from '../hooks';
 import type { Tracker } from '../types';
 
 interface Props {
-    tracker: Tracker;
+    trackers: Tracker[];
+    /** Sum of the latest prices, used for the change indicator. */
+    currentTotal: number | null;
+    /** Sum of the prior-reading prices, used for the change indicator. */
+    previousTotal: number | null;
     onClose: () => void;
 }
 
-export function PriceHistoryModal({ tracker, onClose }: Props) {
-    const { data, isLoading, error } = usePriceHistory(tracker.id);
+export function TotalPriceHistoryModal({ trackers, currentTotal, previousTotal, onClose }: Props) {
+    const ids = trackers.map((t) => t.id);
+    const { points, isLoading, error } = useTotalPriceHistory(ids);
 
-    const points = (data ?? []).map((point) => ({
-        time: new Date(point.scrapedAt).getTime(),
-        price: point.price,
-    }));
+    // Currency is only used for axis/tooltip labels; pick the first one present.
+    const currency = trackers.find((t) => t.currency)?.currency ?? null;
 
     return (
-        <Modal title={`Price history — ${tracker.productName}`} onClose={onClose} width={760}>
+        <Modal title="Total tracked value — price history" onClose={onClose} width={760}>
             <div className="pw-change-summary">
                 <span className="pw-change-summary-label">Since last check</span>
-                <PriceChange current={tracker.currentPrice} previous={tracker.previousPrice} />
+                <PriceChange current={currentTotal} previous={previousTotal} />
             </div>
             {isLoading && <p>Loading price history…</p>}
             {error && <p className="pw-result-fail">Failed to load price history.</p>}
@@ -51,11 +54,11 @@ export function PriceHistoryModal({ tracker, onClose }: Props) {
                         <YAxis
                             width={84}
                             domain={['auto', 'auto']}
-                            tickFormatter={(value) => formatPrice(value as number, tracker.currency)}
+                            tickFormatter={(value) => formatPrice(value as number, currency)}
                         />
                         <Tooltip
                             labelFormatter={(value) => new Date(value as number).toLocaleString()}
-                            formatter={(value) => formatPrice(value as number, tracker.currency)}
+                            formatter={(value) => formatPrice(value as number, currency)}
                         />
                         <Line type="monotone" dataKey="price" stroke="#1f6feb" strokeWidth={2} dot />
                     </LineChart>

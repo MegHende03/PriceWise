@@ -12,10 +12,12 @@ export interface Tracker {
     proxyEnabled: boolean;
     status: Status;
     currentPrice: number | null;
+    previousPrice: number | null;
     currency: string | null;
     lastCheckedAt: string | null;
     nextCheckAt: string | null;
     lastError: string | null;
+    listId: number | null;
 }
 
 export interface TrackerRequest {
@@ -26,6 +28,7 @@ export interface TrackerRequest {
     waitTimeMs: number;
     checkFrequencyMinutes: number;
     proxyEnabled: boolean;
+    listId?: number | null;
 }
 
 export interface TestScrapeRequest {
@@ -56,6 +59,13 @@ export interface PricePoint {
     currency: string | null;
     availability: string | null;
     scrapedAt: string;
+}
+
+export interface TrackerList {
+    id: number;
+    name: string;
+    createdAt: string;
+    updatedAt: string;
 }
 
 /** Row-action callbacks passed to the grid via Ag Grid's `context`. */
