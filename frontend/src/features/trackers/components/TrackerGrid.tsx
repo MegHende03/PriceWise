@@ -25,7 +25,8 @@ const columnDefs: ColDef<Tracker>[] = [
     {
         headerName: 'Price History',
         colId: 'priceHistory',
-        minWidth: 130,
+        flex: 1,
+        minWidth: 180,
         cellRenderer: PriceHistoryCell,
         sortable: false,
         filter: false,

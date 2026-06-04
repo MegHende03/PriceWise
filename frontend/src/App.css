@@ -302,7 +302,6 @@
 .pw-badge {
     display: inline-block;
     color: #fff;
-    border-radius: 999px;
     padding: 2px 10px;
     font-size: 11px;
     font-weight: 700;
@@ -444,9 +443,64 @@
     color: var(--pw-muted);
 }
 
+.pw-totals-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
 .pw-totals-value {
     font-weight: 700;
     color: var(--pw-text);
+}
+
+/* Price-change indicator (grid cell, totals bar, chart modals) */
+.pw-change {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+}
+
+.pw-change-down {
+    color: #1a7f37;
+}
+
+.pw-change-up {
+    color: var(--pw-danger);
+}
+
+.pw-change-flat {
+    color: var(--pw-muted);
+}
+
+.pw-change-arrow {
+    font-weight: 700;
+    line-height: 1;
+}
+
+.pw-pricehistory-cell {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    height: 100%;
+}
+
+/* "Since last check" header inside the chart modals */
+.pw-change-summary {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+    font-size: 14px;
+}
+
+.pw-change-summary-label {
+    font-weight: 600;
+    color: var(--pw-muted);
 }
 
 /* Test-scrape result */

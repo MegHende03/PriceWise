@@ -12,6 +12,7 @@ export interface Tracker {
     proxyEnabled: boolean;
     status: Status;
     currentPrice: number | null;
+    previousPrice: number | null;
     currency: string | null;
     lastCheckedAt: string | null;
     nextCheckAt: string | null;

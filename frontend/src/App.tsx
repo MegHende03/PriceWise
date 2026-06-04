@@ -4,7 +4,9 @@ import { Sidebar } from './components/Sidebar';
 import { TrackerGrid } from './features/trackers/components/TrackerGrid';
 import { TrackerFormModal } from './features/trackers/components/TrackerFormModal';
 import { PriceHistoryModal } from './features/trackers/components/PriceHistoryModal';
+import { TotalPriceHistoryModal } from './features/trackers/components/TotalPriceHistoryModal';
 import { TestResultModal } from './features/trackers/components/TestResultModal';
+import { PriceChange } from './components/PriceChange';
 import {
     useCreateTrackerList,
     useDeleteTrackerList,
@@ -36,6 +38,7 @@ function App() {
     const [testTracker, setTestTracker] = useState<Tracker | null>(null);
     const [sidebarOpen, setSidebarOpen] = useState(true);
     const [activeListId, setActiveListId] = useState<number | null>(null);
+    const [showTotalHistory, setShowTotalHistory] = useState(false);
 
     async function handleAddList(name: string) {
         const newList = await createListAsync(name);
@@ -66,6 +69,21 @@ function App() {
             map.set(key, (map.get(key) ?? 0) + t.currentPrice);
         }
         return Array.from(map.entries());
+    }, [filteredTrackers]);
+
+    // Total change since last check: compare summed current vs prior prices, counting
+    // only trackers that have both readings so a fresh tracker doesn't skew the percent.
+    const totalChange = useMemo(() => {
+        let current = 0;
+        let previous = 0;
+        let hasData = false;
+        for (const t of filteredTrackers) {
+            if (t.currentPrice == null || t.previousPrice == null) continue;
+            current += t.currentPrice;
+            previous += t.previousPrice;
+            hasData = true;
+        }
+        return hasData ? { current, previous } : { current: null, previous: null };
     }, [filteredTrackers]);
 
     const actions = useMemo<GridActions>(
@@ -146,14 +164,31 @@ function App() {
                 <span className="pw-totals-label">
                     {activeList ? `${activeList.name} total` : 'Total tracked value'}
                 </span>
-                <span className="pw-totals-value">
-                    {totalsByCurrency.length === 0
-                        ? '—'
-                        : totalsByCurrency
-                              .map(([currency, sum]) => formatPrice(sum, currency || null))
-                              .join('  ·  ')}
-                </span>
+                <div className="pw-totals-right">
+                    {totalsByCurrency.length > 0 && (
+                        <button className="pw-link-btn" onClick={() => setShowTotalHistory(true)}>
+                            View chart
+                        </button>
+                    )}
+                    <PriceChange current={totalChange.current} previous={totalChange.previous} />
+                    <span className="pw-totals-value">
+                        {totalsByCurrency.length === 0
+                            ? '—'
+                            : totalsByCurrency
+                                  .map(([currency, sum]) => formatPrice(sum, currency || null))
+                                  .join('  ·  ')}
+                    </span>
+                </div>
             </footer>
+
+            {showTotalHistory && (
+                <TotalPriceHistoryModal
+                    trackers={filteredTrackers}
+                    currentTotal={totalChange.current}
+                    previousTotal={totalChange.previous}
+                    onClose={() => setShowTotalHistory(false)}
+                />
+            )}
         </div>
     );
 }
