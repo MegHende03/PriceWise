@@ -1,7 +1,8 @@
 import { useMemo } from 'react';
 import { useMutation, useQueries, useQuery, useQueryClient } from '@tanstack/react-query';
-import { trackerListsApi, trackersApi } from './api';
-import type { PricePoint, TestScrapeRequest, TrackerRequest } from './types';
+import { alertsApi, trackerListsApi, trackersApi } from './api';
+import { ApiError } from '../../api/client';
+import type { NotificationAlert, NotificationAlertRequest, PricePoint, TestScrapeRequest, TrackerRequest } from './types';
 
 const TRACKERS_KEY = ['trackers'] as const;
 const LISTS_KEY = ['tracker-lists'] as const;
@@ -142,6 +143,38 @@ export function useDeleteTrackerList() {
             qc.invalidateQueries({ queryKey: LISTS_KEY });
             qc.invalidateQueries({ queryKey: TRACKERS_KEY });
         },
+    });
+}
+
+export function useAlert(trackerId: number | null) {
+    return useQuery<NotificationAlert | null>({
+        queryKey: ['alert', trackerId],
+        queryFn: async () => {
+            try {
+                return await alertsApi.get(trackerId as number);
+            } catch (err) {
+                if (err instanceof ApiError && err.status === 404) return null;
+                throw err;
+            }
+        },
+        enabled: trackerId != null,
+    });
+}
+
+export function useSaveAlert() {
+    const qc = useQueryClient();
+    return useMutation({
+        mutationFn: ({ trackerId, body }: { trackerId: number; body: NotificationAlertRequest }) =>
+            alertsApi.upsert(trackerId, body),
+        onSuccess: (_, { trackerId }) => qc.invalidateQueries({ queryKey: ['alert', trackerId] }),
+    });
+}
+
+export function useDeleteAlert() {
+    const qc = useQueryClient();
+    return useMutation({
+        mutationFn: (trackerId: number) => alertsApi.remove(trackerId),
+        onSuccess: (_, trackerId) => qc.invalidateQueries({ queryKey: ['alert', trackerId] }),
     });
 }
 

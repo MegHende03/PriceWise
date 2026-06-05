@@ -18,6 +18,65 @@
     font-size: 20px;
 }
 
+.pw-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* Info icon */
+.pw-info-wrap {
+    position: relative;
+}
+
+.pw-info-btn {
+    background: none;
+    border: none;
+    font-size: 22px;
+    line-height: 1;
+    color: var(--pw-muted);
+    cursor: default;
+    padding: 2px 4px;
+    display: flex;
+    align-items: center;
+}
+
+.pw-info-btn:hover {
+    color: var(--pw-text);
+}
+
+/* Tooltip popover */
+.pw-info-tooltip {
+    display: none;
+    position: absolute;
+    top: calc(100% + 10px);
+    right: 0;
+    width: 320px;
+    background: #1e293b;
+    color: #e2e8f0;
+    border-radius: 8px;
+    padding: 13px 15px;
+    font-size: 13px;
+    line-height: 1.55;
+    z-index: 500;
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.25);
+    pointer-events: none;
+}
+
+.pw-info-tooltip::before {
+    content: '';
+    position: absolute;
+    top: -6px;
+    right: 8px;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-bottom: 6px solid #1e293b;
+}
+
+.pw-info-wrap:hover .pw-info-tooltip {
+    display: block;
+}
+
 .pw-body {
     flex: 1;
     min-height: 0;
@@ -541,4 +600,33 @@
     border-radius: 6px;
     padding: 10px;
     resize: vertical;
+}
+
+/* Notification alert modal — current price row */
+.pw-alert-current-price {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 12px;
+    background: var(--pw-bg);
+    border: 1px solid var(--pw-border);
+    border-radius: 6px;
+    font-size: 13px;
+}
+
+.pw-alert-label {
+    color: var(--pw-muted);
+    font-weight: 600;
+}
+
+.pw-alert-value {
+    font-weight: 700;
+    color: var(--pw-text);
+}
+
+/* Bell action button */
+.pw-action-bell {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
 }
