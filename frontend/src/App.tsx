@@ -6,6 +6,7 @@ import { TrackerFormModal } from './features/trackers/components/TrackerFormModa
 import { PriceHistoryModal } from './features/trackers/components/PriceHistoryModal';
 import { TotalPriceHistoryModal } from './features/trackers/components/TotalPriceHistoryModal';
 import { TestResultModal } from './features/trackers/components/TestResultModal';
+import { NotificationModal } from './features/trackers/components/NotificationModal';
 import { PriceChange } from './components/PriceChange';
 import {
     useCreateTrackerList,
@@ -36,6 +37,7 @@ function App() {
     const [formModal, setFormModal] = useState<FormModalState | null>(null);
     const [historyTracker, setHistoryTracker] = useState<Tracker | null>(null);
     const [testTracker, setTestTracker] = useState<Tracker | null>(null);
+    const [notifyTracker, setNotifyTracker] = useState<Tracker | null>(null);
     const [sidebarOpen, setSidebarOpen] = useState(true);
     const [activeListId, setActiveListId] = useState<number | null>(null);
     const [showTotalHistory, setShowTotalHistory] = useState(false);
@@ -98,6 +100,7 @@ function App() {
                 }
             },
             onShowHistory: (tracker) => setHistoryTracker(tracker),
+            onNotify: (tracker) => setNotifyTracker(tracker),
         }),
         [pauseMutate, resumeMutate, deleteMutate],
     );
@@ -106,9 +109,21 @@ function App() {
         <div className="pw-app">
             <header className="pw-header">
                 <h1>PriceWise</h1>
-                <button className="pw-primary" onClick={() => setFormModal({ mode: 'create' })}>
-                    + Add tracker
-                </button>
+                <div className="pw-header-actions">
+                    <div className="pw-info-wrap">
+                        <button className="pw-info-btn" aria-label="Tracking information">ⓘ</button>
+                        <div className="pw-info-tooltip" role="tooltip">
+                            ⚠️ Some retailers employ advanced anti-bot protections, dynamic content loading, 
+                            and frequent website updates that may occasionally prevent automatic price tracking. 
+                            Tracking reliability may vary for stores such as Amazon, Walmart, Costco, Best Buy, Home Depot, 
+                            Lowe's, Nike, Adidas, and Apple. If a price cannot be retrieved, please verify the product URL and 
+                            try again later.
+                        </div>
+                    </div>
+                    <button className="pw-primary" onClick={() => setFormModal({ mode: 'create' })}>
+                        + Add tracker
+                    </button>
+                </div>
             </header>
 
             <div className="pw-body">
@@ -158,6 +173,9 @@ function App() {
             )}
             {testTracker && (
                 <TestResultModal tracker={testTracker} onClose={() => setTestTracker(null)} />
+            )}
+            {notifyTracker && (
+                <NotificationModal tracker={notifyTracker} onClose={() => setNotifyTracker(null)} />
             )}
 
             <footer className="pw-totals-bar">

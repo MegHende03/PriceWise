@@ -68,6 +68,19 @@ export interface TrackerList {
     updatedAt: string;
 }
 
+export interface NotificationAlert {
+    id: number;
+    trackerId: number;
+    email: string;
+    targetPrice: number;
+    lastNotifiedAt: string | null;
+}
+
+export interface NotificationAlertRequest {
+    email: string;
+    targetPrice: number;
+}
+
 /** Row-action callbacks passed to the grid via Ag Grid's `context`. */
 export interface GridActions {
     onEdit: (tracker: Tracker) => void;
@@ -76,4 +89,5 @@ export interface GridActions {
     onResume: (tracker: Tracker) => void;
     onDelete: (tracker: Tracker) => void;
     onShowHistory: (tracker: Tracker) => void;
+    onNotify: (tracker: Tracker) => void;
 }

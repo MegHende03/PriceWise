@@ -1,5 +1,5 @@
 import { apiClient } from '../../api/client';
-import type { PricePoint, ScrapeResult, TestScrapeRequest, Tracker, TrackerList, TrackerRequest } from './types';
+import type { NotificationAlert, NotificationAlertRequest, PricePoint, ScrapeResult, TestScrapeRequest, Tracker, TrackerList, TrackerRequest } from './types';
 
 export const trackersApi = {
     list: () => apiClient.get<Tracker[]>('/api/trackers'),
@@ -12,6 +12,13 @@ export const trackersApi = {
     pause: (id: number) => apiClient.post<Tracker>(`/api/trackers/${id}/pause`),
     resume: (id: number) => apiClient.post<Tracker>(`/api/trackers/${id}/resume`),
     priceHistory: (id: number) => apiClient.get<PricePoint[]>(`/api/trackers/${id}/price-history`),
+};
+
+export const alertsApi = {
+    get: (trackerId: number) => apiClient.get<NotificationAlert>(`/api/trackers/${trackerId}/alert`),
+    upsert: (trackerId: number, body: NotificationAlertRequest) =>
+        apiClient.put<NotificationAlert>(`/api/trackers/${trackerId}/alert`, body),
+    remove: (trackerId: number) => apiClient.del<void>(`/api/trackers/${trackerId}/alert`),
 };
 
 export const trackerListsApi = {
