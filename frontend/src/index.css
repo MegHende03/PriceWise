@@ -1,15 +1,100 @@
 :root {
-    --pw-bg: #f6f8fa;
-    --pw-surface: #ffffff;
-    --pw-border: #d0d7de;
-    --pw-text: #1f2328;
-    --pw-muted: #57606a;
-    --pw-primary: #1f6feb;
-    --pw-primary-hover: #1a5fd0;
-    --pw-danger: #cf222e;
+    /* Dark mode defaults */
+    --pw-bg: rgb(0, 27, 41);
+    --pw-surface: rgb(8, 42, 62);
+    --pw-border: rgba(77, 212, 205, 0.2);
+    --pw-text: rgb(226, 245, 243);
+    --pw-muted: rgb(164, 203, 227);
+    --pw-primary: rgb(77, 212, 205);
+    --pw-primary-hover: rgb(110, 228, 222);
+    --pw-danger: rgb(255, 90, 110);
+    --pw-price-down: rgb(60, 210, 140);
+    --pw-price-up: rgb(255, 90, 110);
 
+    /* Gradients */
+    --pw-header-bg: linear-gradient(135deg, rgb(51, 60, 119) 0%, rgb(0, 27, 41) 100%);
+    --pw-header-text: rgb(226, 245, 243);
+    --pw-logo-glow: 0 0 22px rgba(77, 212, 205, 0.55);
+    --pw-btn-gradient: linear-gradient(135deg, rgb(77, 212, 205) 0%, rgb(80, 60, 200) 100%);
+    --pw-btn-gradient-hover: linear-gradient(135deg, rgb(110, 230, 224) 0%, rgb(100, 80, 220) 100%);
+    --pw-modal-header-bg: linear-gradient(135deg, rgb(15, 60, 90) 0%, rgb(8, 42, 62) 100%);
+    --pw-sidebar-item-hover: rgba(77, 212, 205, 0.08);
+    --pw-sidebar-item-active: rgba(77, 212, 205, 0.14);
+    --pw-sidebar-active-border: rgb(77, 212, 205);
+
+    /* Result boxes */
+    --pw-result-ok-border: rgb(60, 200, 120);
+    --pw-result-ok-bg: rgba(60, 200, 120, 0.08);
+    --pw-result-fail-border: rgb(255, 90, 110);
+    --pw-result-fail-bg: rgba(255, 90, 110, 0.08);
+    --pw-result-fail-text: rgb(255, 90, 110);
+
+    /* Effects */
+    --pw-shadow: 0 4px 24px rgba(0, 0, 0, 0.6);
+    --pw-shadow-sm: 0 2px 10px rgba(0, 0, 0, 0.4);
+    
+    --pw-focus-ring: 0 0 0 3px rgba(77, 212, 205, 0.18);
+    --pw-json-bg: rgba(0, 20, 32, 0.8);
+
+    color-scheme: dark;
     font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
     color: var(--pw-text);
+}
+
+[data-theme="light"] {
+    /* #BC8731 golden-brown bg vs #DCC58E light-tan surface = warm, clearly layered */
+    --pw-bg: rgb(188, 135, 49);
+    --pw-surface: rgb(220, 197, 142);
+
+    /* #3C250F at 38% — very dark brown dividers legible on both layers */
+    --pw-border: rgba(60, 37, 15, 0.38);
+
+    /* #3C250F for body text; #934A0E for muted/labels */
+    --pw-text: rgb(60, 37, 15);
+    --pw-muted: rgb(147, 74, 14);
+
+    /* #934A0E primary; darker shade for hover */
+    --pw-primary: rgb(147, 74, 14);
+    --pw-primary-hover: rgb(108, 52, 8);
+    --pw-danger: rgb(155, 28, 28);
+    --pw-price-down: rgb(32, 108, 48);
+    --pw-price-up: rgb(155, 28, 28);
+
+    /* Header: #3C250F → #934A0E dark-to-medium brown; logo in #DCB61E gold */
+    --pw-header-bg: linear-gradient(135deg, rgb(60, 37, 15) 0%, rgb(147, 74, 14) 100%);
+    --pw-header-text: rgb(220, 182, 30);
+    --pw-logo-glow: 0 0 24px rgba(220, 182, 30, 0.70);
+
+    /* Buttons: #934A0E → #3C250F — dark gradient, white text readable on both */
+    --pw-btn-gradient: linear-gradient(135deg, rgb(147, 74, 14) 0%, rgb(60, 37, 15) 100%);
+    --pw-btn-gradient-hover: linear-gradient(135deg, rgb(172, 92, 22) 0%, rgb(85, 52, 18) 100%);
+
+    /* Modal header: #DCB61E golden → #DCC58E tan — warm wash over the tan surface */
+    --pw-modal-header-bg: linear-gradient(135deg, rgb(220, 182, 30) 0%, rgb(220, 197, 142) 100%);
+
+    /* Sidebar: #934A0E tints readable against the #BC8731 golden-brown background */
+    --pw-sidebar-item-hover: rgba(60, 37, 15, 0.16);
+    --pw-sidebar-item-active: rgba(60, 37, 15, 0.28);
+    --pw-sidebar-active-border: rgb(220, 182, 30);
+
+    /* Result boxes */
+    --pw-result-ok-border: rgb(32, 108, 48);
+    --pw-result-ok-bg: rgba(32, 108, 48, 0.12);
+    --pw-result-fail-border: rgb(155, 28, 28);
+    --pw-result-fail-bg: rgba(155, 28, 28, 0.10);
+    --pw-result-fail-text: rgb(135, 18, 18);
+
+    /* Shadows in #3C250F dark brown */
+    --pw-shadow: 0 4px 24px rgba(60, 37, 15, 0.38);
+    --pw-shadow-sm: 0 2px 10px rgba(60, 37, 15, 0.26);
+
+    /* Glow: #DCB61E golden halo on hover/focus */
+    
+    --pw-focus-ring: 0 0 0 3px rgba(147, 74, 14, 0.26);
+
+    /* Code block: #BC8731 golden-brown — distinct from the tan surface */
+    --pw-json-bg: rgb(188, 135, 49);
+    color-scheme: light;
 }
 
 * {
@@ -25,6 +110,7 @@ body,
 
 body {
     background: var(--pw-bg);
+    transition: background-color 0.35s ease;
 }
 
 button {
