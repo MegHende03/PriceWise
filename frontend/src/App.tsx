@@ -22,6 +22,7 @@ import { Sidebar } from './components/Sidebar';
 import { TrackerGrid } from './features/trackers/components/TrackerGrid';
 import { TrackerFormModal } from './features/trackers/components/TrackerFormModal';
 import { PriceHistoryModal } from './features/trackers/components/PriceHistoryModal';
+import { ManualPriceModal } from './features/trackers/components/ManualPriceModal';
 import { TotalPriceHistoryModal } from './features/trackers/components/TotalPriceHistoryModal';
 import { TestResultModal } from './features/trackers/components/TestResultModal';
 import { NotificationModal } from './features/trackers/components/NotificationModal';
@@ -57,6 +58,7 @@ function App() {
     const [historyTracker, setHistoryTracker] = useState<Tracker | null>(null);
     const [testTracker, setTestTracker] = useState<Tracker | null>(null);
     const [notifyTracker, setNotifyTracker] = useState<Tracker | null>(null);
+    const [priceTracker, setPriceTracker] = useState<Tracker | null>(null);
     const [sidebarOpen, setSidebarOpen] = useState(true);
     const [activeListId, setActiveListId] = useState<number | null>(null);
     const [showTotalHistory, setShowTotalHistory] = useState(false);
@@ -124,6 +126,7 @@ function App() {
             },
             onShowHistory: (tracker) => setHistoryTracker(tracker),
             onNotify: (tracker) => setNotifyTracker(tracker),
+            onUpdatePrice: (tracker) => setPriceTracker(tracker),
         }),
         [pauseMutate, resumeMutate, deleteMutate],
     );
@@ -210,6 +213,9 @@ function App() {
             )}
             {notifyTracker && (
                 <NotificationModal tracker={notifyTracker} onClose={() => setNotifyTracker(null)} />
+            )}
+            {priceTracker && (
+                <ManualPriceModal tracker={priceTracker} onClose={() => setPriceTracker(null)} />
             )}
 
             <footer className="pw-totals-bar">

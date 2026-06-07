@@ -75,7 +75,7 @@ const columnDefs: ColDef<Tracker>[] = [
         minWidth: 150,
         valueFormatter: (p) => formatFrequency(p.value as number),
     },
-    { headerName: 'Status', field: 'status', width: 95, resizable: false, cellRenderer: StatusCell },
+    { headerName: 'Status', field: 'status', width: 120, resizable: false, cellRenderer: StatusCell },
     {
         headerName: 'Actions',
         colId: 'actions',
