@@ -17,6 +17,7 @@ function MoonIcon() {
     );
 }
 import './App.css';
+import owlLogo from '../assests/owl.svg';
 import { Sidebar } from './components/Sidebar';
 import { TrackerGrid } from './features/trackers/components/TrackerGrid';
 import { TrackerFormModal } from './features/trackers/components/TrackerFormModal';
@@ -131,7 +132,20 @@ function App() {
         <div className="pw-app">
             <header className="pw-header">
                 <div className="pw-header-left">
+                    <img src={owlLogo} alt="PriceWise logo" className="pw-logo" />
                     <h1>PriceWise</h1>
+                </div>
+                <div className="pw-header-actions">
+                    <div className="pw-info-wrap">
+                        <button className="pw-info-btn" aria-label="Tracking information">ⓘ</button>
+                        <div className="pw-info-tooltip" role="tooltip">
+                            ⚠️ Some retailers employ advanced anti-bot protections, dynamic content loading,
+                            and frequent website updates that may occasionally prevent automatic price tracking.
+                            Tracking reliability may vary for stores such as Amazon, Walmart, Costco, Best Buy, Home Depot,
+                            Lowe's, Nike, Adidas, and Apple. If a price cannot be retrieved, please verify the product URL and
+                            try again later.
+                        </div>
+                    </div>
                     <button
                         className="pw-theme-toggle"
                         onClick={() => setIsDark((d) => !d)}
@@ -140,18 +154,6 @@ function App() {
                     >
                         {isDark ? <SunIcon /> : <MoonIcon />}
                     </button>
-                </div>
-                <div className="pw-header-actions">
-                    <div className="pw-info-wrap">
-                        <button className="pw-info-btn" aria-label="Tracking information">ⓘ</button>
-                        <div className="pw-info-tooltip" role="tooltip">
-                            ⚠️ Some retailers employ advanced anti-bot protections, dynamic content loading, 
-                            and frequent website updates that may occasionally prevent automatic price tracking. 
-                            Tracking reliability may vary for stores such as Amazon, Walmart, Costco, Best Buy, Home Depot, 
-                            Lowe's, Nike, Adidas, and Apple. If a price cannot be retrieved, please verify the product URL and 
-                            try again later.
-                        </div>
-                    </div>
                     <button className="pw-primary" onClick={() => setFormModal({ mode: 'create' })}>
                         + Add tracker
                     </button>
@@ -201,7 +203,7 @@ function App() {
                 />
             )}
             {historyTracker && (
-                <PriceHistoryModal tracker={historyTracker} onClose={() => setHistoryTracker(null)} />
+                <PriceHistoryModal tracker={historyTracker} isDark={isDark} onClose={() => setHistoryTracker(null)} />
             )}
             {testTracker && (
                 <TestResultModal tracker={testTracker} onClose={() => setTestTracker(null)} />
@@ -236,6 +238,7 @@ function App() {
                     trackers={filteredTrackers}
                     currentTotal={totalChange.current}
                     previousTotal={totalChange.previous}
+                    isDark={isDark}
                     onClose={() => setShowTotalHistory(false)}
                 />
             )}

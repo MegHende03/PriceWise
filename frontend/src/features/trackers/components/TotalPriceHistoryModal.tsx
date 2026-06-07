@@ -19,10 +19,11 @@ interface Props {
     currentTotal: number | null;
     /** Sum of the prior-reading prices, used for the change indicator. */
     previousTotal: number | null;
+    isDark: boolean;
     onClose: () => void;
 }
 
-export function TotalPriceHistoryModal({ trackers, currentTotal, previousTotal, onClose }: Props) {
+export function TotalPriceHistoryModal({ trackers, currentTotal, previousTotal, isDark, onClose }: Props) {
     const ids = trackers.map((t) => t.id);
     const { points, isLoading, error } = useTotalPriceHistory(ids);
 
@@ -43,24 +44,29 @@ export function TotalPriceHistoryModal({ trackers, currentTotal, previousTotal, 
             {points.length > 0 && (
                 <ResponsiveContainer width="100%" height={340}>
                     <LineChart data={points} margin={{ top: 16, right: 24, bottom: 8, left: 8 }}>
-                        <CartesianGrid strokeDasharray="3 3" />
+                        <CartesianGrid strokeDasharray="3 3" stroke={isDark ? 'rgba(77, 212, 205, 0.2)' : 'rgba(37, 99, 235, 0.15)'} />
                         <XAxis
                             dataKey="time"
                             type="number"
                             domain={['dataMin', 'dataMax']}
                             scale="time"
                             tickFormatter={(value) => new Date(value as number).toLocaleDateString()}
+                            tick={{ fill: isDark ? 'rgb(164, 203, 227)' : '#64748b' }}
+                            stroke={isDark ? 'rgba(77, 212, 205, 0.2)' : 'rgba(37, 99, 235, 0.15)'}
                         />
                         <YAxis
                             width={84}
                             domain={['auto', 'auto']}
                             tickFormatter={(value) => formatPrice(value as number, currency)}
+                            tick={{ fill: isDark ? 'rgb(164, 203, 227)' : '#64748b' }}
+                            stroke={isDark ? 'rgba(77, 212, 205, 0.2)' : 'rgba(37, 99, 235, 0.15)'}
                         />
                         <Tooltip
                             labelFormatter={(value) => new Date(value as number).toLocaleString()}
                             formatter={(value) => formatPrice(value as number, currency)}
+                            contentStyle={isDark ? { background: 'rgb(8, 42, 62)', border: '1px solid rgba(77, 212, 205, 0.3)', color: 'rgb(226, 245, 243)' } : undefined}
                         />
-                        <Line type="monotone" dataKey="price" stroke="#1f6feb" strokeWidth={2} dot />
+                        <Line type="monotone" dataKey="price" stroke={isDark ? 'rgb(77, 212, 205)' : '#2563eb'} strokeWidth={2} dot />
                     </LineChart>
                 </ResponsiveContainer>
             )}

@@ -42,58 +42,37 @@
 }
 
 [data-theme="light"] {
-    /* #BC8731 golden-brown bg vs #DCC58E light-tan surface = warm, clearly layered */
-    --pw-bg: rgb(188, 135, 49);
-    --pw-surface: rgb(220, 197, 142);
+    --pw-bg: #f1f5f9;
+    --pw-surface: #ffffff;
+    --pw-border: rgba(15, 23, 42, 0.12);
+    --pw-text: #0f172a;
+    --pw-muted: #64748b;
+    --pw-primary: #2563eb;
+    --pw-primary-hover: #1d4ed8;
+    --pw-danger: #dc2626;
+    --pw-price-down: #16a34a;
+    --pw-price-up: #dc2626;
 
-    /* #3C250F at 38% — very dark brown dividers legible on both layers */
-    --pw-border: rgba(60, 37, 15, 0.38);
+    --pw-header-bg: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
+    --pw-header-text: #ffffff;
+    --pw-logo-glow: 0 0 22px rgba(96, 165, 250, 0.6);
+    --pw-btn-gradient: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%);
+    --pw-btn-gradient-hover: linear-gradient(135deg, #1d4ed8 0%, #6d28d9 100%);
+    --pw-modal-header-bg: linear-gradient(135deg, #eff6ff 0%, #ffffff 100%);
+    --pw-sidebar-item-hover: rgba(37, 99, 235, 0.07);
+    --pw-sidebar-item-active: rgba(37, 99, 235, 0.12);
+    --pw-sidebar-active-border: #2563eb;
 
-    /* #3C250F for body text; #934A0E for muted/labels */
-    --pw-text: rgb(60, 37, 15);
-    --pw-muted: rgb(147, 74, 14);
+    --pw-result-ok-border: #16a34a;
+    --pw-result-ok-bg: rgba(22, 163, 74, 0.08);
+    --pw-result-fail-border: #dc2626;
+    --pw-result-fail-bg: rgba(220, 38, 38, 0.08);
+    --pw-result-fail-text: #dc2626;
 
-    /* #934A0E primary; darker shade for hover */
-    --pw-primary: rgb(147, 74, 14);
-    --pw-primary-hover: rgb(108, 52, 8);
-    --pw-danger: rgb(155, 28, 28);
-    --pw-price-down: rgb(32, 108, 48);
-    --pw-price-up: rgb(155, 28, 28);
-
-    /* Header: #3C250F → #934A0E dark-to-medium brown; logo in #DCB61E gold */
-    --pw-header-bg: linear-gradient(135deg, rgb(60, 37, 15) 0%, rgb(147, 74, 14) 100%);
-    --pw-header-text: rgb(220, 182, 30);
-    --pw-logo-glow: 0 0 24px rgba(220, 182, 30, 0.70);
-
-    /* Buttons: #934A0E → #3C250F — dark gradient, white text readable on both */
-    --pw-btn-gradient: linear-gradient(135deg, rgb(147, 74, 14) 0%, rgb(60, 37, 15) 100%);
-    --pw-btn-gradient-hover: linear-gradient(135deg, rgb(172, 92, 22) 0%, rgb(85, 52, 18) 100%);
-
-    /* Modal header: #DCB61E golden → #DCC58E tan — warm wash over the tan surface */
-    --pw-modal-header-bg: linear-gradient(135deg, rgb(220, 182, 30) 0%, rgb(220, 197, 142) 100%);
-
-    /* Sidebar: #934A0E tints readable against the #BC8731 golden-brown background */
-    --pw-sidebar-item-hover: rgba(60, 37, 15, 0.16);
-    --pw-sidebar-item-active: rgba(60, 37, 15, 0.28);
-    --pw-sidebar-active-border: rgb(220, 182, 30);
-
-    /* Result boxes */
-    --pw-result-ok-border: rgb(32, 108, 48);
-    --pw-result-ok-bg: rgba(32, 108, 48, 0.12);
-    --pw-result-fail-border: rgb(155, 28, 28);
-    --pw-result-fail-bg: rgba(155, 28, 28, 0.10);
-    --pw-result-fail-text: rgb(135, 18, 18);
-
-    /* Shadows in #3C250F dark brown */
-    --pw-shadow: 0 4px 24px rgba(60, 37, 15, 0.38);
-    --pw-shadow-sm: 0 2px 10px rgba(60, 37, 15, 0.26);
-
-    /* Glow: #DCB61E golden halo on hover/focus */
-    
-    --pw-focus-ring: 0 0 0 3px rgba(147, 74, 14, 0.26);
-
-    /* Code block: #BC8731 golden-brown — distinct from the tan surface */
-    --pw-json-bg: rgb(188, 135, 49);
+    --pw-shadow: 0 4px 24px rgba(15, 23, 42, 0.10);
+    --pw-shadow-sm: 0 2px 10px rgba(15, 23, 42, 0.07);
+    --pw-focus-ring: 0 0 0 3px rgba(37, 99, 235, 0.20);
+    --pw-json-bg: #f8fafc;
     color-scheme: light;
 }
 

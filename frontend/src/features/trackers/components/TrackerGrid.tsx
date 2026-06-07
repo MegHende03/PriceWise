@@ -26,15 +26,15 @@ const agDarkTheme = themeQuartz.withParams({
 });
 
 const agLightTheme = themeQuartz.withParams({
-    accentColor: 'rgb(147, 74, 14)',        /* #934A0E */
-    backgroundColor: 'rgb(220, 197, 142)',  /* #DCC58E light tan surface */
-    foregroundColor: 'rgb(60, 37, 15)',     /* #3C250F */
-    borderColor: 'rgba(60, 37, 15, 0.28)',
-    oddRowBackgroundColor: 'rgba(188, 135, 49, 0.14)',  /* #BC8731 golden stripe */
-    rowHoverColor: 'rgba(60, 37, 15, 0.09)',
-    headerBackgroundColor: 'rgba(220, 182, 30, 0.28)',  /* #DCB61E golden tint */
-    headerTextColor: 'rgb(60, 37, 15)',
-    selectedRowBackgroundColor: 'rgba(147, 74, 14, 0.18)',
+    accentColor: '#2563eb',
+    backgroundColor: '#ffffff',
+    foregroundColor: '#0f172a',
+    borderColor: 'rgba(15, 23, 42, 0.12)',
+    oddRowBackgroundColor: 'rgba(241, 245, 249, 0.8)',
+    rowHoverColor: 'rgba(37, 99, 235, 0.05)',
+    headerBackgroundColor: '#f1f5f9',
+    headerTextColor: '#64748b',
+    selectedRowBackgroundColor: 'rgba(37, 99, 235, 0.10)',
     fontSize: 13,
     wrapperBorderRadius: 12,
     borderRadius: 4,
