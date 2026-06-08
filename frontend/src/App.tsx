@@ -26,7 +26,8 @@ import { ManualPriceModal } from './features/trackers/components/ManualPriceModa
 import { TotalPriceHistoryModal } from './features/trackers/components/TotalPriceHistoryModal';
 import { TestResultModal } from './features/trackers/components/TestResultModal';
 import { NotificationModal } from './features/trackers/components/NotificationModal';
-import { PriceChange } from './components/PriceChange';
+import { PriceDeltaWithRange } from './features/trackers/components/PriceDeltaWithRange';
+import type { TimeRange } from './lib/format';
 import {
     useCreateTrackerList,
     useDeleteTrackerList,
@@ -35,9 +36,10 @@ import {
     useResumeTracker,
     useTrackerLists,
     useTrackers,
+    useTotalPriceHistory,
 } from './features/trackers/hooks';
 import type { GridActions, Tracker } from './features/trackers/types';
-import { formatPrice } from './lib/format';
+import { formatPrice, timeRangeToCutoffMs } from './lib/format';
 
 interface FormModalState {
     mode: 'create' | 'edit';
@@ -62,6 +64,7 @@ function App() {
     const [sidebarOpen, setSidebarOpen] = useState(true);
     const [activeListId, setActiveListId] = useState<number | null>(null);
     const [showTotalHistory, setShowTotalHistory] = useState(false);
+    const [totalRange, setTotalRange] = useState<TimeRange>('prev');
 
     useEffect(() => {
         document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
@@ -98,9 +101,9 @@ function App() {
         return Array.from(map.entries());
     }, [filteredTrackers]);
 
-    // Total change since last check: compare summed current vs prior prices, counting
-    // only trackers that have both readings so a fresh tracker doesn't skew the percent.
-    const totalChange = useMemo(() => {
+    // "Prev" delta: sum of current vs prior prices for trackers that have both readings.
+    // Always computed — used by the modal and as the base for 'prev' range in the footer.
+    const prevTotalChange = useMemo(() => {
         let current = 0;
         let previous = 0;
         let hasData = false;
@@ -112,6 +115,30 @@ function App() {
         }
         return hasData ? { current, previous } : { current: null, previous: null };
     }, [filteredTrackers]);
+
+    // Fetch aggregate history only when a non-prev range is selected in the footer.
+    const totalHistoryIds = totalRange !== 'prev' ? filteredTrackers.map((t) => t.id) : [];
+    const { points: totalHistoryPoints } = useTotalPriceHistory(totalHistoryIds);
+
+    // Range-aware total delta for the footer.
+    const totalChange = useMemo(() => {
+        if (totalRange === 'prev') return prevTotalChange;
+        let current = 0;
+        let hasCurrentData = false;
+        for (const t of filteredTrackers) {
+            if (t.currentPrice == null) continue;
+            current += t.currentPrice;
+            hasCurrentData = true;
+        }
+        if (!hasCurrentData) return { current: null, previous: null };
+        const cutoff = timeRangeToCutoffMs(totalRange)!;
+        let previous: number | null = null;
+        for (const point of totalHistoryPoints) {
+            if (point.time <= cutoff) previous = point.price;
+            else break;
+        }
+        return { current, previous };
+    }, [filteredTrackers, totalRange, prevTotalChange, totalHistoryPoints]);
 
     const actions = useMemo<GridActions>(
         () => ({
@@ -219,16 +246,25 @@ function App() {
             )}
 
             <footer className="pw-totals-bar">
-                <span className="pw-totals-label">
-                    {activeList ? `${activeList.name} total` : 'Total tracked value'}
-                </span>
-                <div className="pw-totals-right">
+                <div className="pw-totals-left">
+                    <span className="pw-totals-label">
+                        {activeList ? `${activeList.name} total` : 'Total tracked value'}
+                    </span>
                     {totalsByCurrency.length > 0 && (
                         <button className="pw-link-btn" onClick={() => setShowTotalHistory(true)}>
                             View chart
                         </button>
                     )}
-                    <PriceChange current={totalChange.current} previous={totalChange.previous} />
+                </div>
+                <div className="pw-totals-right">
+                    <PriceDeltaWithRange
+                        currentPrice={totalChange.current}
+                        previousPrice={totalChange.previous}
+                        currency={filteredTrackers.find((t) => t.currency)?.currency ?? null}
+                        range={totalRange}
+                        onRangeChange={setTotalRange}
+                        arrowUp
+                    />
                     <span className="pw-totals-value">
                         {totalsByCurrency.length === 0
                             ? '—'
@@ -242,8 +278,8 @@ function App() {
             {showTotalHistory && (
                 <TotalPriceHistoryModal
                     trackers={filteredTrackers}
-                    currentTotal={totalChange.current}
-                    previousTotal={totalChange.previous}
+                    currentTotal={prevTotalChange.current}
+                    previousTotal={prevTotalChange.previous}
                     isDark={isDark}
                     onClose={() => setShowTotalHistory(false)}
                 />

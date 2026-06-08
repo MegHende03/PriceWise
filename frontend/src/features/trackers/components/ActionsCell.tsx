@@ -57,16 +57,14 @@ export function ActionsCell(params: ICellRendererParams<Tracker>) {
             <button className="pw-action pw-danger" onClick={() => actions.onDelete(tracker)}>
                 Delete
             </button>
-            {!isManual && (
-                <button
-                    className="pw-action pw-action-bell"
-                    onClick={() => actions.onNotify(tracker)}
-                    title="Set price alert"
-                >
-                    <BellIcon />
-                    Alert
-                </button>
-            )}
+            <button
+                className="pw-action pw-action-bell"
+                onClick={() => actions.onNotify(tracker)}
+                title={isManual ? 'Set weekly update reminder' : 'Set price alert'}
+            >
+                <BellIcon />
+                Alert
+            </button>
         </div>
     );
 }

@@ -150,6 +150,18 @@
     width: 100%;
 }
 
+/* Visual divider between the pinned Status column and the adjacent Actions column. */
+.pw-grid-wrap .ag-header-cell.pw-col-divider,
+.pw-grid-wrap .ag-cell.pw-col-divider {
+    border-right: 1px solid var(--pw-border);
+}
+
+/* Let the status badge fill the cell edge-to-edge (no surrounding cell padding). */
+.pw-grid-wrap .ag-cell.pw-status-cell {
+    padding-left: 0;
+    padding-right: 0;
+}
+
 /* ── Sidebar ─────────────────────────────────────────────── */
 .pw-sidebar {
     width: 220px;
@@ -697,6 +709,12 @@
     transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 
+.pw-totals-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
 .pw-totals-label {
     font-weight: 600;
     color: var(--pw-muted);
@@ -738,6 +756,121 @@
 .pw-change-arrow {
     font-weight: 700;
     line-height: 1;
+}
+
+/* ── Price delta with range selector ─────────────────────── */
+.pw-delta-wrap {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    white-space: nowrap;
+}
+
+.pw-delta-label {
+    font-weight: 600;
+    color: var(--pw-muted);
+    font-size: 13px;
+}
+
+.pw-range-trigger {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    padding: 0;
+    border: none;
+    background: transparent;
+    color: var(--pw-muted);
+    cursor: pointer;
+    font-size: 15px;
+    line-height: 1;
+    border-radius: 4px;
+    transition: background 0.15s ease, color 0.15s ease;
+}
+
+.pw-range-trigger:hover {
+    background: var(--pw-border);
+    color: var(--pw-text);
+}
+
+.pw-range-dropdown {
+    display: flex;
+    flex-direction: column;
+    min-width: 140px;
+    padding: 4px;
+    background: var(--pw-card-bg, var(--pw-header-bg));
+    border: 1px solid var(--pw-border);
+    border-radius: 10px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+}
+
+.pw-range-option {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    width: 100%;
+    padding: 7px 10px;
+    border: none;
+    background: transparent;
+    color: var(--pw-text);
+    text-align: left;
+    font-size: 13px;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: background 0.15s ease;
+}
+
+.pw-range-option:hover {
+    background: var(--pw-border);
+}
+
+.pw-range-option-active {
+    font-weight: 700;
+}
+
+.pw-range-check {
+    display: inline-block;
+    width: 12px;
+    color: var(--pw-accent, currentColor);
+    white-space: pre;
+}
+
+/* ── Round time-range buttons (price-history modal) ──────── */
+.pw-range-circles {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-left: auto;
+    flex-wrap: wrap;
+}
+
+.pw-range-circle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    border: 1px solid var(--pw-border);
+    border-radius: 50%;
+    background: var(--pw-surface);
+    color: var(--pw-muted);
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+.pw-range-circle:hover {
+    border-color: var(--pw-primary);
+    color: var(--pw-primary);
+}
+
+.pw-range-circle-active {
+    background: var(--pw-primary);
+    border-color: var(--pw-primary);
+    color: #fff;
 }
 
 .pw-pricehistory-cell {
@@ -828,4 +961,12 @@
     display: inline-flex;
     align-items: center;
     gap: 2px;
+}
+
+/* Yellow hover (overrides the default blue .pw-action hover). */
+.pw-action-bell:hover:not(:disabled) {
+    border-color: #eab308;
+    color: #eab308;
+    background: rgba(234, 179, 8, 0.1);
+    box-shadow: 0 0 8px rgba(234, 179, 8, 0.2);
 }

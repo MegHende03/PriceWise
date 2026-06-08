@@ -40,23 +40,27 @@ const agLightTheme = themeQuartz.withParams({
     borderRadius: 4,
 });
 
+// Flex columns with low minWidth floors so the grid compresses to fit the panel
+// (no horizontal scrollbar) instead of overflowing. Price History keeps a higher
+// floor since its "View chart + Prev Δ" content can't compress further.
 const columnDefs: ColDef<Tracker>[] = [
-    { headerName: 'Product Name', field: 'productName', flex: 2, minWidth: 180 },
-    { headerName: 'Website', field: 'website', flex: 1, minWidth: 120 },
-    { headerName: 'Product URL', field: 'productUrl', flex: 2, minWidth: 160, cellRenderer: ProductUrlCell },
+    { headerName: 'Product Name', field: 'productName', flex: 2, minWidth: 130 },
+    { headerName: 'Website', field: 'website', flex: 1, minWidth: 90 },
+    { headerName: 'Product URL', field: 'productUrl', flex: 2, minWidth: 120, cellRenderer: ProductUrlCell },
     {
         headerName: 'Current Price',
         colId: 'currentPrice',
         field: 'currentPrice',
         flex: 1,
-        minWidth: 120,
+        minWidth: 90,
         valueFormatter: (p) => formatPrice(p.data?.currentPrice ?? null, p.data?.currency ?? null),
     },
     {
         headerName: 'Price History',
         colId: 'priceHistory',
         flex: 1,
-        minWidth: 180,
+        // Fits "View chart" + the "Prev Δ: ↑$0.00" indicator without clipping.
+        minWidth: 250,
         cellRenderer: PriceHistoryCell,
         sortable: false,
         filter: false,
@@ -65,17 +69,29 @@ const columnDefs: ColDef<Tracker>[] = [
         headerName: 'Last Checked',
         field: 'lastCheckedAt',
         flex: 1,
-        minWidth: 170,
+        minWidth: 130,
         valueFormatter: (p) => formatDateTime(p.value as string | null),
     },
     {
         headerName: 'Check Frequency',
         field: 'checkFrequencyMinutes',
         flex: 1,
-        minWidth: 150,
+        minWidth: 110,
         valueFormatter: (p) => formatFrequency(p.value as number),
     },
-    { headerName: 'Status', field: 'status', width: 120, resizable: false, cellRenderer: StatusCell },
+    {
+        headerName: 'Status',
+        field: 'status',
+        width: 120,
+        resizable: false,
+        suppressSizeToFit: true,
+        pinned: 'right',
+        // Divider so Status and the adjacent pinned Actions column read as separate cells.
+        // pw-status-cell drops the cell padding so the badge fills the cell edge-to-edge.
+        cellClass: ['pw-col-divider', 'pw-status-cell'],
+        headerClass: 'pw-col-divider',
+        cellRenderer: StatusCell,
+    },
     {
         headerName: 'Actions',
         colId: 'actions',
@@ -106,6 +122,7 @@ export function TrackerGrid({ rows, actions, isDark }: Props) {
                 getRowId={(p) => String(p.data.id)}
                 defaultColDef={{ sortable: true, filter: true, resizable: true }}
                 rowHeight={46}
+                suppressHorizontalScroll
                 overlayNoRowsTemplate='No trackers yet — click &ldquo;Add tracker&rdquo; to create one.'
             />
         </div>

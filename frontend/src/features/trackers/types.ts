@@ -85,17 +85,21 @@ export interface TrackerList {
     updatedAt: string;
 }
 
+export type AlertType = 'PRICE_DROP' | 'WEEKLY_REMINDER';
+
 export interface NotificationAlert {
     id: number;
     trackerId: number;
     email: string;
-    targetPrice: number;
+    alertType: AlertType;
+    targetPrice: number | null;
     lastNotifiedAt: string | null;
 }
 
 export interface NotificationAlertRequest {
     email: string;
-    targetPrice: number;
+    alertType: AlertType;
+    targetPrice?: number | null;
 }
 
 /** Row-action callbacks passed to the grid via Ag Grid's `context`. */
