@@ -4,12 +4,9 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
@@ -71,14 +68,6 @@ public class TrackedProduct {
     @Column(name = "current_price", precision = 12, scale = 2)
     private BigDecimal currentPrice;
 
-    /**
-     * The price from the previous successful check, captured just before
-     * {@link #currentPrice} is overwritten. Drives the "% change since last check"
-     * indicator; {@code null} until a second successful check has run.
-     */
-    @Column(name = "previous_price", precision = 12, scale = 2)
-    private BigDecimal previousPrice;
-
     @Column(name = "currency", length = 8)
     private String currency;
 
@@ -93,11 +82,6 @@ public class TrackedProduct {
     /** Message from the most recent failed/blocked scrape, if any. */
     @Column(name = "last_error", length = 2048)
     private String lastError;
-
-    /** The list this tracker belongs to, or {@code null} if unassigned. */
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "tracker_list_id")
-    private TrackerList trackerList;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt;
@@ -205,14 +189,6 @@ public class TrackedProduct {
         this.currentPrice = currentPrice;
     }
 
-    public BigDecimal getPreviousPrice() {
-        return previousPrice;
-    }
-
-    public void setPreviousPrice(BigDecimal previousPrice) {
-        this.previousPrice = previousPrice;
-    }
-
     public String getCurrency() {
         return currency;
     }
@@ -251,13 +227,5 @@ public class TrackedProduct {
 
     public Instant getUpdatedAt() {
         return updatedAt;
-    }
-
-    public TrackerList getTrackerList() {
-        return trackerList;
-    }
-
-    public void setTrackerList(TrackerList trackerList) {
-        this.trackerList = trackerList;
     }
 }
