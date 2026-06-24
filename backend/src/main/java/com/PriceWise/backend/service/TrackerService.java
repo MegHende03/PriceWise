@@ -10,7 +10,6 @@ import com.PriceWise.backend.entity.Status;
 import com.PriceWise.backend.entity.TrackedProduct;
 import com.PriceWise.backend.exception.NotFoundException;
 import com.PriceWise.backend.repository.PriceHistoryRepository;
-import com.PriceWise.backend.repository.TrackerListRepository;
 import com.PriceWise.backend.repository.TrackerRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,16 +24,13 @@ public class TrackerService {
 
     private final TrackerRepository trackerRepository;
     private final PriceHistoryRepository priceHistoryRepository;
-    private final TrackerListRepository trackerListRepository;
     private final ScrapeService scrapeService;
 
     public TrackerService(TrackerRepository trackerRepository,
                           PriceHistoryRepository priceHistoryRepository,
-                          TrackerListRepository trackerListRepository,
                           ScrapeService scrapeService) {
         this.trackerRepository = trackerRepository;
         this.priceHistoryRepository = priceHistoryRepository;
-        this.trackerListRepository = trackerListRepository;
         this.scrapeService = scrapeService;
     }
 
@@ -127,8 +123,6 @@ public class TrackerService {
         p.setNextCheckAt(nextCheckAt(now, p.getCheckFrequencyMinutes()));
 
         if (result.success() && result.price() != null) {
-            // Remember the prior reading so the UI can show the change since last check.
-            p.setPreviousPrice(p.getCurrentPrice());
             p.setCurrentPrice(result.price());
             p.setCurrency(result.currency());
             p.setLastError(null);
@@ -166,12 +160,6 @@ public class TrackerService {
         p.setWaitTimeMs(req.waitTimeMs());
         p.setCheckFrequencyMinutes(req.checkFrequencyMinutes());
         p.setProxyEnabled(req.proxyEnabled());
-        if (req.listId() != null) {
-            p.setTrackerList(trackerListRepository.findById(req.listId())
-                    .orElseThrow(() -> new NotFoundException("List " + req.listId() + " not found")));
-        } else {
-            p.setTrackerList(null);
-        }
     }
 
     private static String deriveWebsite(String url) {
