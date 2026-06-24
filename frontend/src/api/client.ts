@@ -1,8 +1,6 @@
 const API_BASE =
     (import.meta.env.VITE_API_BASE_URL as string | undefined) ?? 'http://localhost:8080';
 
-const CREDENTIALS_KEY = 'pricewise_credentials';
-
 export class ApiError extends Error {
     readonly status: number;
 
@@ -13,34 +11,9 @@ export class ApiError extends Error {
     }
 }
 
-export function getStoredCredentials(): { username: string; password: string } | null {
-    const stored = localStorage.getItem(CREDENTIALS_KEY);
-    return stored ? JSON.parse(stored) : null;
-}
-
-export function setStoredCredentials(username: string, password: string): void {
-    localStorage.setItem(CREDENTIALS_KEY, JSON.stringify({ username, password }));
-}
-
-export function clearStoredCredentials(): void {
-    localStorage.removeItem(CREDENTIALS_KEY);
-}
-
-function getBasicAuthHeader(): string | null {
-    const creds = getStoredCredentials();
-    if (!creds) return null;
-    return 'Basic ' + btoa(`${creds.username}:${creds.password}`);
-}
-
 async function request<T>(path: string, options?: RequestInit): Promise<T> {
-    const headers = { 'Content-Type': 'application/json', ...(options?.headers ?? {}) };
-    const authHeader = getBasicAuthHeader();
-    if (authHeader) {
-        headers['Authorization'] = authHeader;
-    }
-
     const response = await fetch(`${API_BASE}${path}`, {
-        headers,
+        headers: { 'Content-Type': 'application/json', ...(options?.headers ?? {}) },
         ...options,
     });
 
