@@ -16,6 +16,10 @@ export function Sidebar({ lists, activeListId, isOpen, onToggle, onAddList, onDe
     const [adding, setAdding] = useState(false);
     const [newName, setNewName] = useState('');
     const inputRef = useRef<HTMLInputElement>(null);
+    // Pressing Enter calls confirmAdd and then unmounts the focused input, which makes
+    // React fire onBlur → confirmAdd a second time. This guard keeps each add session
+    // to a single submission so the list is created exactly once.
+    const submittedRef = useRef(false);
 
     useEffect(() => {
         if (adding && inputRef.current) {
@@ -23,12 +27,24 @@ export function Sidebar({ lists, activeListId, isOpen, onToggle, onAddList, onDe
         }
     }, [adding]);
 
+    // Collapsing the sidebar cancels an in-progress add so the input never renders while
+    // the sidebar width is animating (which caused a momentary size glitch).
+    useEffect(() => {
+        if (!isOpen) {
+            setAdding(false);
+            setNewName('');
+        }
+    }, [isOpen]);
+
     function startAdding() {
+        submittedRef.current = false;
         setNewName('');
         setAdding(true);
     }
 
     function confirmAdd() {
+        if (submittedRef.current) return;
+        submittedRef.current = true;
         const trimmed = newName.trim();
         if (trimmed) {
             onAddList(trimmed);
@@ -37,12 +53,15 @@ export function Sidebar({ lists, activeListId, isOpen, onToggle, onAddList, onDe
         setNewName('');
     }
 
+    function cancelAdd() {
+        submittedRef.current = true;
+        setAdding(false);
+        setNewName('');
+    }
+
     function handleKeyDown(e: KeyboardEvent<HTMLInputElement>) {
         if (e.key === 'Enter') confirmAdd();
-        if (e.key === 'Escape') {
-            setAdding(false);
-            setNewName('');
-        }
+        if (e.key === 'Escape') cancelAdd();
     }
 
     return (

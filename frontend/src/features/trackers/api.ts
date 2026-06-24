@@ -1,5 +1,5 @@
 import { apiClient } from '../../api/client';
-import type { NotificationAlert, NotificationAlertRequest, PricePoint, ScrapeResult, TestScrapeRequest, Tracker, TrackerList, TrackerRequest } from './types';
+import type { ManualPriceRequest, NotificationAlert, NotificationAlertRequest, PricePoint, ScrapeResult, ScrapeStat, TestScrapeRequest, Tracker, TrackerList, TrackerRequest } from './types';
 
 export const trackersApi = {
     list: () => apiClient.get<Tracker[]>('/api/trackers'),
@@ -9,9 +9,11 @@ export const trackersApi = {
     test: (body: TestScrapeRequest) => apiClient.post<ScrapeResult>('/api/trackers/test', body),
     testExisting: (id: number) => apiClient.post<ScrapeResult>(`/api/trackers/${id}/test`),
     check: (id: number) => apiClient.post<ScrapeResult>(`/api/trackers/${id}/check`),
+    recordPrice: (id: number, body: ManualPriceRequest) => apiClient.post<Tracker>(`/api/trackers/${id}/price`, body),
     pause: (id: number) => apiClient.post<Tracker>(`/api/trackers/${id}/pause`),
     resume: (id: number) => apiClient.post<Tracker>(`/api/trackers/${id}/resume`),
     priceHistory: (id: number) => apiClient.get<PricePoint[]>(`/api/trackers/${id}/price-history`),
+    scrapeStats: () => apiClient.get<ScrapeStat[]>('/api/trackers/scrape-stats'),
 };
 
 export const alertsApi = {

@@ -25,23 +25,34 @@ export function ActionsCell(params: ICellRendererParams<Tracker>) {
     if (!tracker) return null;
     const actions = params.context as GridActions;
     const isActive = tracker.status === 'ACTIVE';
+    const isManual = tracker.trackingMode === 'MANUAL';
 
+    // Manual trackers aren't scraped or alert-able, so they get a minimal action set;
+    // scraped trackers keep the full set (test, pause/resume, alert).
     return (
         <div className="pw-actions">
             <button className="pw-action" onClick={() => actions.onEdit(tracker)}>
                 Edit
             </button>
-            <button className="pw-action" onClick={() => actions.onTest(tracker)}>
-                Test scrape
-            </button>
-            {isActive ? (
-                <button className="pw-action" onClick={() => actions.onPause(tracker)}>
-                    Pause
+            {isManual ? (
+                <button className="pw-action" onClick={() => actions.onUpdatePrice(tracker)}>
+                    Update price
                 </button>
             ) : (
-                <button className="pw-action" onClick={() => actions.onResume(tracker)}>
-                    Resume
-                </button>
+                <>
+                    <button className="pw-action" onClick={() => actions.onTest(tracker)}>
+                        Test scrape
+                    </button>
+                    {isActive ? (
+                        <button className="pw-action" onClick={() => actions.onPause(tracker)}>
+                            Pause
+                        </button>
+                    ) : (
+                        <button className="pw-action" onClick={() => actions.onResume(tracker)}>
+                            Resume
+                        </button>
+                    )}
+                </>
             )}
             <button className="pw-action pw-danger" onClick={() => actions.onDelete(tracker)}>
                 Delete
@@ -49,7 +60,7 @@ export function ActionsCell(params: ICellRendererParams<Tracker>) {
             <button
                 className="pw-action pw-action-bell"
                 onClick={() => actions.onNotify(tracker)}
-                title="Set price alert"
+                title={isManual ? 'Set weekly update reminder' : 'Set price alert'}
             >
                 <BellIcon />
                 Alert
