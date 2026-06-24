@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { useMutation, useQueries, useQuery, useQueryClient } from '@tanstack/react-query';
 import { alertsApi, trackerListsApi, trackersApi } from './api';
 import { ApiError } from '../../api/client';
-import type { NotificationAlert, NotificationAlertRequest, PricePoint, TestScrapeRequest, TrackerRequest } from './types';
+import type { ManualPriceRequest, NotificationAlert, NotificationAlertRequest, PricePoint, TestScrapeRequest, TrackerRequest } from './types';
 
 const TRACKERS_KEY = ['trackers'] as const;
 const LISTS_KEY = ['tracker-lists'] as const;
@@ -101,6 +101,27 @@ export function useDeleteTracker() {
     return useMutation({
         mutationFn: (id: number) => trackersApi.remove(id),
         onSuccess: () => qc.invalidateQueries({ queryKey: TRACKERS_KEY }),
+    });
+}
+
+export function useRecordManualPrice() {
+    const qc = useQueryClient();
+    return useMutation({
+        mutationFn: ({ id, body }: { id: number; body: ManualPriceRequest }) =>
+            trackersApi.recordPrice(id, body),
+        onSuccess: (_, { id }) => {
+            qc.invalidateQueries({ queryKey: TRACKERS_KEY });
+            qc.invalidateQueries({ queryKey: ['price-history', id] });
+        },
+    });
+}
+
+/** Per-domain scrape success rates, for the Add-Tracker reliability hint. */
+export function useScrapeStats() {
+    return useQuery({
+        queryKey: ['scrape-stats'],
+        queryFn: trackersApi.scrapeStats,
+        staleTime: 5 * 60_000,
     });
 }
 

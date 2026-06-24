@@ -1,15 +1,79 @@
 :root {
-    --pw-bg: #f6f8fa;
-    --pw-surface: #ffffff;
-    --pw-border: #d0d7de;
-    --pw-text: #1f2328;
-    --pw-muted: #57606a;
-    --pw-primary: #1f6feb;
-    --pw-primary-hover: #1a5fd0;
-    --pw-danger: #cf222e;
+    /* Dark mode defaults */
+    --pw-bg: rgb(0, 27, 41);
+    --pw-surface: rgb(8, 42, 62);
+    --pw-border: rgba(77, 212, 205, 0.2);
+    --pw-text: rgb(226, 245, 243);
+    --pw-muted: rgb(164, 203, 227);
+    --pw-primary: rgb(77, 212, 205);
+    --pw-primary-hover: rgb(110, 228, 222);
+    --pw-danger: rgb(255, 90, 110);
+    --pw-price-down: rgb(60, 210, 140);
+    --pw-price-up: rgb(255, 90, 110);
 
+    /* Gradients */
+    --pw-header-bg: linear-gradient(135deg, rgb(51, 60, 119) 0%, rgb(0, 27, 41) 100%);
+    --pw-header-text: rgb(226, 245, 243);
+    --pw-logo-glow: 0 0 22px rgba(77, 212, 205, 0.55);
+    --pw-btn-gradient: linear-gradient(135deg, rgb(77, 212, 205) 0%, rgb(80, 60, 200) 100%);
+    --pw-btn-gradient-hover: linear-gradient(135deg, rgb(110, 230, 224) 0%, rgb(100, 80, 220) 100%);
+    --pw-modal-header-bg: linear-gradient(135deg, rgb(15, 60, 90) 0%, rgb(8, 42, 62) 100%);
+    --pw-sidebar-item-hover: rgba(77, 212, 205, 0.08);
+    --pw-sidebar-item-active: rgba(77, 212, 205, 0.14);
+    --pw-sidebar-active-border: rgb(77, 212, 205);
+
+    /* Result boxes */
+    --pw-result-ok-border: rgb(60, 200, 120);
+    --pw-result-ok-bg: rgba(60, 200, 120, 0.08);
+    --pw-result-fail-border: rgb(255, 90, 110);
+    --pw-result-fail-bg: rgba(255, 90, 110, 0.08);
+    --pw-result-fail-text: rgb(255, 90, 110);
+
+    /* Effects */
+    --pw-shadow: 0 4px 24px rgba(0, 0, 0, 0.6);
+    --pw-shadow-sm: 0 2px 10px rgba(0, 0, 0, 0.4);
+    
+    --pw-focus-ring: 0 0 0 3px rgba(77, 212, 205, 0.18);
+    --pw-json-bg: rgba(0, 20, 32, 0.8);
+
+    color-scheme: dark;
     font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
     color: var(--pw-text);
+}
+
+[data-theme="light"] {
+    --pw-bg: #f1f5f9;
+    --pw-surface: #ffffff;
+    --pw-border: rgba(15, 23, 42, 0.12);
+    --pw-text: #0f172a;
+    --pw-muted: #64748b;
+    --pw-primary: #2563eb;
+    --pw-primary-hover: #1d4ed8;
+    --pw-danger: #dc2626;
+    --pw-price-down: #16a34a;
+    --pw-price-up: #dc2626;
+
+    --pw-header-bg: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
+    --pw-header-text: #ffffff;
+    --pw-logo-glow: 0 0 22px rgba(96, 165, 250, 0.6);
+    --pw-btn-gradient: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%);
+    --pw-btn-gradient-hover: linear-gradient(135deg, #1d4ed8 0%, #6d28d9 100%);
+    --pw-modal-header-bg: linear-gradient(135deg, #eff6ff 0%, #ffffff 100%);
+    --pw-sidebar-item-hover: rgba(37, 99, 235, 0.07);
+    --pw-sidebar-item-active: rgba(37, 99, 235, 0.12);
+    --pw-sidebar-active-border: #2563eb;
+
+    --pw-result-ok-border: #16a34a;
+    --pw-result-ok-bg: rgba(22, 163, 74, 0.08);
+    --pw-result-fail-border: #dc2626;
+    --pw-result-fail-bg: rgba(220, 38, 38, 0.08);
+    --pw-result-fail-text: #dc2626;
+
+    --pw-shadow: 0 4px 24px rgba(15, 23, 42, 0.10);
+    --pw-shadow-sm: 0 2px 10px rgba(15, 23, 42, 0.07);
+    --pw-focus-ring: 0 0 0 3px rgba(37, 99, 235, 0.20);
+    --pw-json-bg: #f8fafc;
+    color-scheme: light;
 }
 
 * {
@@ -25,6 +89,7 @@ body,
 
 body {
     background: var(--pw-bg);
+    transition: background-color 0.35s ease;
 }
 
 button {

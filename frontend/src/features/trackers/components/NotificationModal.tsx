@@ -11,6 +11,7 @@ interface Props {
 }
 
 export function NotificationModal({ tracker, onClose }: Props) {
+    const isManual = tracker.trackingMode === 'MANUAL';
     const { data: existingAlert, isLoading } = useAlert(tracker.id);
     const saveAlert = useSaveAlert();
     const deleteAlert = useDeleteAlert();
@@ -22,7 +23,7 @@ export function NotificationModal({ tracker, onClose }: Props) {
     useEffect(() => {
         if (existingAlert) {
             setEmail(existingAlert.email);
-            setTargetPrice(String(existingAlert.targetPrice));
+            if (existingAlert.targetPrice != null) setTargetPrice(String(existingAlert.targetPrice));
         }
     }, [existingAlert]);
 
@@ -32,7 +33,9 @@ export function NotificationModal({ tracker, onClose }: Props) {
         try {
             await saveAlert.mutateAsync({
                 trackerId: tracker.id,
-                body: { email: email.trim(), targetPrice: Number(targetPrice) },
+                body: isManual
+                    ? { email: email.trim(), alertType: 'WEEKLY_REMINDER' }
+                    : { email: email.trim(), alertType: 'PRICE_DROP', targetPrice: Number(targetPrice) },
             });
             onClose();
         } catch (err) {
@@ -50,14 +53,20 @@ export function NotificationModal({ tracker, onClose }: Props) {
         }
     }
 
+    const title = isManual
+        ? `Update Reminder — ${tracker.productName}`
+        : `Price Alert — ${tracker.productName}`;
+
     return (
-        <Modal title={`Price Alert — ${tracker.productName}`} onClose={onClose} width={440}>
+        <Modal title={title} onClose={onClose} width={440}>
             {isLoading ? (
                 <p className="pw-hint">Loading…</p>
             ) : (
                 <form className="pw-form" onSubmit={handleSave}>
                     <p className="pw-hint">
-                        Get an email when the price drops to or below your target.
+                        {isManual
+                            ? 'Get a weekly email reminding you to check and update this item’s price.'
+                            : 'Get an email when the price drops to or below your target.'}
                     </p>
 
                     <div className="pw-alert-current-price">
@@ -78,22 +87,25 @@ export function NotificationModal({ tracker, onClose }: Props) {
                         />
                     </label>
 
-                    <label className="pw-field">
-                        <span>Target price *</span>
-                        <input
-                            type="number"
-                            step="0.01"
-                            min="0.01"
-                            value={targetPrice}
-                            onChange={(e) => setTargetPrice(e.target.value)}
-                            placeholder={tracker.currentPrice != null ? String(tracker.currentPrice) : '0.00'}
-                            required
-                        />
-                    </label>
+                    {!isManual && (
+                        <label className="pw-field">
+                            <span>Target price *</span>
+                            <input
+                                type="number"
+                                step="0.01"
+                                min="0.01"
+                                value={targetPrice}
+                                onChange={(e) => setTargetPrice(e.target.value)}
+                                placeholder={tracker.currentPrice != null ? String(tracker.currentPrice) : '0.00'}
+                                required
+                            />
+                        </label>
+                    )}
 
                     {existingAlert?.lastNotifiedAt && (
                         <p className="pw-hint">
-                            Last notified: {new Date(existingAlert.lastNotifiedAt).toLocaleString()}
+                            {isManual ? 'Last reminded: ' : 'Last notified: '}
+                            {new Date(existingAlert.lastNotifiedAt).toLocaleString()}
                         </p>
                     )}
 
@@ -105,7 +117,11 @@ export function NotificationModal({ tracker, onClose }: Props) {
                                 onClick={handleDelete}
                                 disabled={deleteAlert.isPending}
                             >
-                                {deleteAlert.isPending ? 'Removing…' : 'Remove alert'}
+                                {deleteAlert.isPending
+                                    ? 'Removing…'
+                                    : isManual
+                                      ? 'Remove reminder'
+                                      : 'Remove alert'}
                             </button>
                         )}
                         <button
@@ -116,8 +132,8 @@ export function NotificationModal({ tracker, onClose }: Props) {
                             {saveAlert.isPending
                                 ? 'Saving…'
                                 : existingAlert
-                                  ? 'Update alert'
-                                  : 'Set alert'}
+                                  ? isManual ? 'Update reminder' : 'Update alert'
+                                  : isManual ? 'Set reminder' : 'Set alert'}
                         </button>
                     </div>
 

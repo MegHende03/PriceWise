@@ -22,10 +22,12 @@ public record TrackerResponse(
         boolean proxyEnabled,
         Status status,
         BigDecimal currentPrice,
+        BigDecimal previousPrice,
         String currency,
         Instant lastCheckedAt,
         Instant nextCheckAt,
-        String lastError
+        String lastError,
+        Long listId
 ) {
     public static TrackerResponse from(TrackedProduct p) {
         return new TrackerResponse(
@@ -40,10 +42,12 @@ public record TrackerResponse(
                 p.isProxyEnabled(),
                 p.getStatus(),
                 p.getCurrentPrice(),
+                p.getPreviousPrice(),
                 p.getCurrency(),
                 p.getLastCheckedAt(),
                 p.getNextCheckAt(),
-                p.getLastError()
+                p.getLastError(),
+                p.getTrackerList() != null ? p.getTrackerList().getId() : null
         );
     }
 }
