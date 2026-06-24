@@ -1,4 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
+import LoginModal from './components/LoginModal';
+import { getStoredCredentials } from './api/client';
 
 function SunIcon() {
     return (
@@ -47,6 +49,8 @@ interface FormModalState {
 }
 
 function App() {
+    const [isLoggedIn, setIsLoggedIn] = useState(!!getStoredCredentials());
+
     const { data: trackers, isLoading, error } = useTrackers();
     const { data: lists = [] } = useTrackerLists();
     const { mutateAsync: createListAsync } = useCreateTrackerList();
@@ -157,6 +161,15 @@ function App() {
         }),
         [pauseMutate, resumeMutate, deleteMutate],
     );
+
+    if (!isLoggedIn) {
+        return (
+            <LoginModal
+                isOpen={true}
+                onLoginSuccess={() => setIsLoggedIn(true)}
+            />
+        );
+    }
 
     return (
         <div className="pw-app">
