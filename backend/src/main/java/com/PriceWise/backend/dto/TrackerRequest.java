@@ -14,7 +14,6 @@ public record TrackerRequest(
         String availabilitySelector,
         @PositiveOrZero int waitTimeMs,
         @Min(1) int checkFrequencyMinutes,
-        boolean proxyEnabled,
-        Long listId
+        boolean proxyEnabled
 ) {
 }
