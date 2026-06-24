@@ -2,19 +2,30 @@ import type { ICellRendererParams } from 'ag-grid-community';
 import type { Status, Tracker } from '../types';
 
 const COLORS: Record<Status, string> = {
-    ACTIVE: 'rgb(26, 127, 55)',
-    PAUSED: '#9a6700',
-    FAILED: '#cf222e',
-    BLOCKED: '#8250df',
+    ACTIVE: 'rgb(40, 180, 110)',
+    PAUSED: 'rgb(180, 120, 0)',
+    FAILED: 'rgb(210, 50, 70)',
+    BLOCKED: 'rgb(130, 80, 220)',
 };
+
+const MANUAL_COLOR = 'rgb(70, 110, 200)';
 
 export function StatusCell(params: ICellRendererParams<Tracker>) {
     const status = params.value as Status | undefined;
     if (!status) return null;
+    // Manual trackers aren't scheduled, so the scrape lifecycle status doesn't apply —
+    // show a "MANUAL" badge instead, which reads more meaningfully in the grid.
+    if (params.data?.trackingMode === 'MANUAL') {
+        return (
+            <div className="pw-badge pw-badge--full" style={{ backgroundColor: MANUAL_COLOR }} title="Price entered manually">
+                MANUAL
+            </div>
+        );
+    }
     const title = params.data?.lastError ?? undefined;
     return (
-        <span className="pw-badge" style={{ backgroundColor: COLORS[status] ?? '#57606a' }} title={title}>
+        <div className="pw-badge pw-badge--full" style={{ backgroundColor: COLORS[status] ?? '#57606a' }} title={title}>
             {status}
-        </span>
+        </div>
     );
 }

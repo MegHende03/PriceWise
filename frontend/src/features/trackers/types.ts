@@ -1,5 +1,7 @@
 export type Status = 'ACTIVE' | 'PAUSED' | 'FAILED' | 'BLOCKED';
 
+export type TrackingMode = 'SCRAPED' | 'MANUAL';
+
 export interface Tracker {
     id: number;
     productName: string;
@@ -11,6 +13,7 @@ export interface Tracker {
     checkFrequencyMinutes: number;
     proxyEnabled: boolean;
     status: Status;
+    trackingMode: TrackingMode;
     currentPrice: number | null;
     previousPrice: number | null;
     currency: string | null;
@@ -23,12 +26,26 @@ export interface Tracker {
 export interface TrackerRequest {
     productName: string;
     productUrl: string;
-    priceSelector: string;
+    priceSelector?: string | null;
     availabilitySelector?: string | null;
     waitTimeMs: number;
     checkFrequencyMinutes: number;
     proxyEnabled: boolean;
+    trackingMode: TrackingMode;
     listId?: number | null;
+}
+
+export interface ManualPriceRequest {
+    price: number;
+    currency?: string | null;
+}
+
+export interface ScrapeStat {
+    website: string;
+    successCount: number;
+    failureCount: number;
+    sampleSize: number;
+    successRate: number | null;
 }
 
 export interface TestScrapeRequest {
@@ -68,17 +85,21 @@ export interface TrackerList {
     updatedAt: string;
 }
 
+export type AlertType = 'PRICE_DROP' | 'WEEKLY_REMINDER';
+
 export interface NotificationAlert {
     id: number;
     trackerId: number;
     email: string;
-    targetPrice: number;
+    alertType: AlertType;
+    targetPrice: number | null;
     lastNotifiedAt: string | null;
 }
 
 export interface NotificationAlertRequest {
     email: string;
-    targetPrice: number;
+    alertType: AlertType;
+    targetPrice?: number | null;
 }
 
 /** Row-action callbacks passed to the grid via Ag Grid's `context`. */
@@ -90,4 +111,5 @@ export interface GridActions {
     onDelete: (tracker: Tracker) => void;
     onShowHistory: (tracker: Tracker) => void;
     onNotify: (tracker: Tracker) => void;
+    onUpdatePrice: (tracker: Tracker) => void;
 }

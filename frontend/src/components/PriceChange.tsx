@@ -1,30 +1,36 @@
-import { computePercentChange } from '../lib/format';
+import { computePercentChange, formatPrice } from '../lib/format';
 
 interface Props {
     current: number | null | undefined;
     previous: number | null | undefined;
+    currency?: string | null;
 }
 
-/**
- * Shows the percentage price change since the previous reading: a green "-15% ↘" when
- * the price dropped, a red "+21% ↗" when it rose, and a plain dash when it didn't move
- * (or there's no prior price to compare against).
- */
-export function PriceChange({ current, previous }: Props) {
-    const pct = computePercentChange(current, previous);
-    const rounded = pct == null ? 0 : Math.round(pct);
+export function PriceChange({ current, previous, currency }: Props) {
+    // No prior reading to compare against counts as no change: show $0.00, never a dash.
+    const diff = current != null && previous != null ? current - previous : 0;
 
-    if (rounded === 0) {
-        return <span className="pw-change pw-change-flat" title="No change since last check">—</span>;
+    if (Math.abs(diff) < 0.005) {
+        return (
+            <span className="pw-change pw-change-flat" title="No change">
+                {formatPrice(0, currency ?? null)}
+            </span>
+        );
     }
 
-    const down = rounded < 0;
-    const sign = down ? '' : '+'; // negatives already carry a leading minus
+    const up = diff > 0;
+    const pct = computePercentChange(current, previous);
+    const pctAbs = pct != null ? Math.abs(pct).toFixed(2) : null;
+    const arrow = up ? '↑' : '↓';
+    const hoverText = pctAbs != null ? `${arrow}${pctAbs}%` : '';
+
     return (
-        <span className={`pw-change ${down ? 'pw-change-down' : 'pw-change-up'}`}>
-            {sign}
-            {rounded}%
-            <span className="pw-change-arrow" aria-hidden="true">{down ? '↘' : '↗'}</span>
+        <span
+            className={`pw-change ${up ? 'pw-change-up' : 'pw-change-down'}`}
+            title={hoverText}
+        >
+            <span className="pw-change-arrow" aria-hidden="true">{arrow}</span>
+            {formatPrice(diff, currency ?? null)}
         </span>
     );
 }
