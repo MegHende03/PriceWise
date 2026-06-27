@@ -14,4 +14,7 @@ public interface TrackerRepository extends JpaRepository<TrackedProduct, Long> {
      * {@code next_check_at} at or before the supplied instant. Used by the scheduler sweep.
      */
     List<TrackedProduct> findByStatusAndNextCheckAtLessThanEqual(Status status, Instant cutoff);
+
+    /** All trackers assigned to a specific list. Used when deleting a list to unassign them. */
+    List<TrackedProduct> findByTrackerList_Id(Long listId);
 }
