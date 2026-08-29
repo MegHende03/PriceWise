@@ -53,7 +53,7 @@ function App() {
     const { mutate: deleteListMutate } = useDeleteTrackerList();
     const { mutate: pauseMutate } = usePauseTracker();
     const { mutate: resumeMutate } = useResumeTracker();
-    const { mutate: deleteMutate } = useDeleteTracker();
+    const { mutateAsync: deleteAsync } = useDeleteTracker();
 
     const [isDark, setIsDark] = useState(true);
     const [formModal, setFormModal] = useState<FormModalState | null>(null);
@@ -146,16 +146,22 @@ function App() {
             onTest: (tracker) => setTestTracker(tracker),
             onPause: (tracker) => pauseMutate(tracker.id),
             onResume: (tracker) => resumeMutate(tracker.id),
-            onDelete: (tracker) => {
-                if (window.confirm(`Delete "${tracker.productName}"? This also removes its price history.`)) {
-                    deleteMutate(tracker.id);
+            onDelete: async (tracker) => {
+                if (!window.confirm(`Delete "${tracker.productName}"? This also removes its price history.`)) {
+                    return;
+                }
+                try {
+                    await deleteAsync(tracker.id);
+                } catch (err) {
+                    const message = err instanceof Error ? err.message : 'Unknown error';
+                    window.alert(`Could not delete "${tracker.productName}": ${message}`);
                 }
             },
             onShowHistory: (tracker) => setHistoryTracker(tracker),
             onNotify: (tracker) => setNotifyTracker(tracker),
             onUpdatePrice: (tracker) => setPriceTracker(tracker),
         }),
-        [pauseMutate, resumeMutate, deleteMutate],
+        [pauseMutate, resumeMutate, deleteAsync],
     );
 
     return (
